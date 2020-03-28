@@ -1,23 +1,16 @@
 import * as React from "react";
 import { RouteComponentProps } from "react-router";
-import { Container, Navbar, NavItem, Nav, Row, Col } from "reactstrap";
+import { Container, Navbar, NavItem, Nav, Row, Col, Button } from "reactstrap";
 import { WithEventSideBar } from "./sidebar";
 import st from "./schedule.module.css";
 import cn from "classnames";
 import { ScheduleDetailModal } from "./schedule_detail_modal";
-export interface ScheduleItem {
-  id: number;
-  sh: number;
-  sm: number;
-  eh: number;
-  em: number;
-  title: string;
-  description?: string;
-  color: string;
-}
-const items: ScheduleItem[] = [
+import { ScheduleState } from "../../../states/event/schedule";
+import { AppState } from "../../../store";
+import AddScheduleModal from "./add_schedule_modal";
+const items: ScheduleState[] = [
   {
-    id: 0,
+    // id: 0,
     sh: 7,
     sm: 30,
     eh: 11,
@@ -27,7 +20,7 @@ const items: ScheduleItem[] = [
     color: "red"
   },
   {
-    id: 1,
+    // id: 1,
     sh: 4,
     sm: 30,
     eh: 4,
@@ -37,7 +30,7 @@ const items: ScheduleItem[] = [
     color: "gray"
   },
   {
-    id: 2,
+    // id: 2,
     sh: 6,
     sm: 30,
     eh: 7,
@@ -47,20 +40,25 @@ const items: ScheduleItem[] = [
     color: "#00FFFF"
   }
 ];
-
-export const Schedule: React.FC<RouteComponentProps<{
+type ComponentProps = RouteComponentProps<{
   sid: string;
   eid: string;
-}>> = props => {
+}> &
+  Pick<AppState, "schedule">;
+export const Schedule: React.FC<ComponentProps> = props => {
   const params = props.match.params;
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [modalProp, setModalProp] = React.useState<ScheduleItem>();
-  const modalToggle = () => {
-    setIsModalOpen(!isModalOpen);
+  const [isDetailModalOpen, setIsDetailModalOpen] = React.useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = React.useState(false);
+  const [modalProp, setModalProp] = React.useState<ScheduleState>();
+  const DetailModalToggle = () => {
+    setIsDetailModalOpen(!isDetailModalOpen);
   };
-  const modalOpen = (item: ScheduleItem) => {
+  const AddModalToggle = () => {
+    setIsAddModalOpen(!isAddModalOpen);
+  };
+  const modalOpen = (item: ScheduleState) => {
     setModalProp(item);
-    modalToggle();
+    DetailModalToggle();
   };
   const line = () => {
     const list = [];
@@ -90,12 +88,11 @@ export const Schedule: React.FC<RouteComponentProps<{
         </div>
       );
     }
-    console.log(list);
     return list;
   };
   const item = () => {
     const list: JSX.Element[] = [];
-    items.forEach(item => {
+    props.schedule.forEach(item => {
       const topPos = `${5 + item.sh * 5 + (5 * item.sm) / 60}vh`;
       const height = () => {
         if (item.sm < item.em) {
@@ -104,7 +101,6 @@ export const Schedule: React.FC<RouteComponentProps<{
           return (item.eh - item.sh) * 5 - (5 * (item.sm - item.em)) / 60;
         }
       };
-      let isOpen = false;
       list.push(
         <Row
           className={cn(st.item)}
@@ -120,7 +116,11 @@ export const Schedule: React.FC<RouteComponentProps<{
           <Container>
             {height() > 2 && (
               <Row>
-                <Col sm="2">{`${item.sh}:${item.sm} ~ ${item.eh}:${item.em}`}</Col>
+                <Col sm="2">{`${item.sh}:${
+                  String(item.sm).length == 2 ? item.sm : `0${item.sm}`
+                } ~ ${item.eh}:${
+                  String(item.em).length == 2 ? item.em : `0${item.em}`
+                }`}</Col>
                 <Col sm="10">{item.title}</Col>
               </Row>
             )}
@@ -137,6 +137,17 @@ export const Schedule: React.FC<RouteComponentProps<{
           <h3>スケジュール</h3>
         </Row>
         <Row>
+          <Col sm={{ offset: 10, size: 2 }}>
+            <Button
+              color="primary"
+              style={{ width: "100%" }}
+              onClick={() => AddModalToggle()}
+            >
+              追加
+            </Button>
+          </Col>
+        </Row>
+        <Row>
           <Col sm="1" className={cn(st.time)}>
             {timeDisp()}
           </Col>
@@ -151,9 +162,14 @@ export const Schedule: React.FC<RouteComponentProps<{
       <ScheduleDetailModal
         eid={params.eid}
         sid={params.sid}
-        isOpen={isModalOpen}
+        isOpen={isDetailModalOpen}
         detail={modalProp}
-        toggle={modalToggle}
+        toggle={DetailModalToggle}
+      />
+      <AddScheduleModal
+        isOpen={isAddModalOpen}
+        toggle={AddModalToggle}
+        nowSchedules={props.schedule}
       />
     </WithEventSideBar>
   );

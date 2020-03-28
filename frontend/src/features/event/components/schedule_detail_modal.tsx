@@ -1,12 +1,12 @@
 import * as React from "react";
-import { ScheduleItem } from "./schedule";
 import { Modal, ModalBody, Button, ModalFooter, ModalHeader } from "reactstrap";
+import { ScheduleState } from "../../../states/event/schedule";
 export {};
 interface OwnProps {
   isOpen: boolean;
   eid: string;
   sid: string;
-  detail?: ScheduleItem;
+  detail?: ScheduleState;
   toggle: () => void;
 }
 export const ScheduleDetailModal: React.FC<OwnProps> = props => {
