@@ -1,0 +1,27 @@
+.box {
+  height: 130vh;
+  margin-bottom: 20px;
+  position: relative;
+}
+.time {
+  height: 130vh;
+  position: relative;
+}
+.item {
+  position: absolute;
+}
+
+.time_disp {
+  height: 5vh;
+  width: 95%;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.line {
+  height: 5vh;
+  width: 100%;
+  border-bottom: 1px dashed gray;
+  position: absolute;
+}

@@ -1,6 +1,5 @@
 import { reducerWithInitialState } from "typescript-fsa-reducers";
 import { userActions } from "../actions/user";
-import { object } from "prop-types";
 
 export interface UserState {
   email: string;

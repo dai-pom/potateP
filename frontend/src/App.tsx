@@ -1,19 +1,13 @@
 import * as React from "react";
-import Login from "./features/login/containers/login";
-import Home from "./features/home/containers/home";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
-import {
-  Navbar,
-  NavbarBrand,
-  Nav,
-  NavItem,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  NavLink
-} from "reactstrap";
-import SignUp from "./features/signup/containers/signup";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Auth from "./Auth";
+import Home from "./features/home/containers/home";
+import Login from "./features/login/containers/login";
+import SignUp from "./features/signup/containers/signup";
+import NavigationBar from "./features/navigataionBar/components/navigationBar";
+import EventList from "./features/event/containers/eventList";
+import EventOverview from "./features/event/containers/event_overview";
+import schedule from "./features/event/containers/schedule";
 
 class App extends React.Component {
   render() {
@@ -26,8 +20,14 @@ class App extends React.Component {
             <Auth>
               <Switch>
                 <div>
-                  <Menu />
+                  <NavigationBar />
                   <Route path={"/home"} component={Home} />
+                  <Route exact path={"/events"} component={EventList} />
+                  <Route exact path="/events/:eid" component={EventOverview} />
+                  <Route
+                    path="/events/:eid/schedule/:sid"
+                    component={schedule}
+                  />
                 </div>
               </Switch>
             </Auth>
@@ -39,25 +39,3 @@ class App extends React.Component {
 }
 
 export default App;
-
-type MenuProps = {};
-const Menu: React.FC<MenuProps> = () => {
-  return (
-    <div>
-      <Navbar expand="md">
-        <NavbarBrand href="/">Todo</NavbarBrand>
-        <Nav navbar>
-          <NavItem>
-            <NavLink herf="/">HOME</NavLink>
-          </NavItem>
-          <UncontrolledDropdown nav inNavbar>
-            <DropdownToggle nav caret>
-              Options
-            </DropdownToggle>
-            <DropdownMenu right>option1</DropdownMenu>
-          </UncontrolledDropdown>
-        </Nav>
-      </Navbar>
-    </div>
-  );
-};

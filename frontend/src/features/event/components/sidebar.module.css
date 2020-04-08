@@ -1,0 +1,15 @@
+.sidemenu {
+  border-right: 1px solid black;
+  min-height: 100vh;
+  min-width: 20vw;
+  position: fixed;
+}
+.mainpain {
+  margin-left: 20vw;
+}
+.sideList {
+  margin-top: 15px;
+}
+.link {
+  text-align: left;
+}

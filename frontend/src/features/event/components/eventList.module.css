@@ -1,0 +1,13 @@
+.eventlist {
+  margin-top: 20px;
+}
+.link {
+  color: black;
+  text-decoration: none;
+}
+.hover {
+  border: 2px solid blue !important;
+}
+.errorDate {
+  border-color: red !important;
+}

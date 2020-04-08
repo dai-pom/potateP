@@ -1787,6 +1787,11 @@
     "@types/long" "*"
     "@types/node" "*"
 
+"@types/classnames@^2.2.9":
+  version "2.2.9"
+  resolved "https://registry.yarnpkg.com/@types/classnames/-/classnames-2.2.9.tgz#d868b6febb02666330410fe7f58f3c4b8258be7b"
+  integrity sha512-MNl+rT5UmZeilaPxAVs6YaPC2m6aA8rofviZbhbxpPpl61uKodfdQVsBtgJGTqGizEf02oW3tsVe7FYB8kK14A==
+
 "@types/eslint-visitor-keys@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@types/eslint-visitor-keys/-/eslint-visitor-keys-1.0.0.tgz#1ee30d79544ca84d68d4b3cdb0af4f205663dd2d"
@@ -1891,6 +1896,15 @@
   resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.2.tgz#690a1475b84f2a884fd07cd797c00f5f31356ea8"
   integrity sha512-ce5d3q03Ex0sy4R14722Rmt6MT07Ua+k4FwDfdcToYJcMKNtRVQvJ6JCAPdAmAnbRb6CsX6aYb9m96NGod9uTw==
 
+"@types/react-datepicker@^2.11.0":
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/@types/react-datepicker/-/react-datepicker-2.11.0.tgz#aa6faa66de17b0ff96bc0af9d5d2506d5dd99703"
+  integrity sha512-eagG8BE3TFgPYyZb2/hG4+2delLH9z/4OWzT7wuTCKLHDDXIXgvkb2O2cW8q4/wuqnTnMxo+vl3vgPTENkofzw==
+  dependencies:
+    "@types/react" "*"
+    date-fns "^2.0.1"
+    popper.js "^1.14.1"
+
 "@types/react-dom@*", "@types/react-dom@^16.9.0":
   version "16.9.4"
   resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-16.9.4.tgz#0b58df09a60961dcb77f62d4f1832427513420df"
@@ -1940,6 +1954,13 @@
   dependencies:
     "@types/react" "*"
     popper.js "^1.14.1"
+
+"@types/redux-localstorage@^1.0.8":
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@types/redux-localstorage/-/redux-localstorage-1.0.8.tgz#bcbf07d1451d60b2e874a47eebc02d780bce7c0d"
+  integrity sha512-pt+w3Y2K4Xwx79exTFZO356buBCgCM6NnyMv/EmASWb03a81g/EMEhNgH6w9dOnhTs1Clnmf2ykaia0FWXjsbQ==
+  dependencies:
+    redux "^3.6.0"
 
 "@types/stack-utils@^1.0.1":
   version "1.0.1"
@@ -3236,7 +3257,7 @@ class-utils@^0.3.5:
     isobject "^3.0.0"
     static-extend "^0.1.1"
 
-classnames@^2.2.3:
+classnames@^2.2.3, classnames@^2.2.6:
   version "2.2.6"
   resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
   integrity sha512-JR/iSQOSt+LQIWwrwEzJ9uk0xfN3mTVYMwt1Ir5mUcSN6pU+V4zQFFaJsclJbPuAUQH+yfWef6tm7l1quW3C8Q==
@@ -3932,6 +3953,11 @@ data-urls@^1.0.0, data-urls@^1.1.0:
     whatwg-mimetype "^2.2.0"
     whatwg-url "^7.0.0"
 
+date-fns@^2.0.1:
+  version "2.9.0"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.9.0.tgz#d0b175a5c37ed5f17b97e2272bbc1fa5aec677d2"
+  integrity sha512-khbFLu/MlzLjEzy9Gh8oY1hNt/Dvxw3J6Rbc28cVoYWQaC1S3YI4xwkF9ZWcjDLscbZlY9hISMr66RFzZagLsA==
+
 debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.0, debug@^2.6.8, debug@^2.6.9:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.9.tgz#5d128515df134ff327e90a4c93f4e077a536341f"
@@ -4427,6 +4453,11 @@ es6-symbol@^3.1.1, es6-symbol@~3.1.3:
   dependencies:
     d "^1.0.1"
     ext "^1.1.2"
+
+es6-viewpoint@^0.1.3:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/es6-viewpoint/-/es6-viewpoint-0.1.3.tgz#9b1b99a286b618d6d6b71f1503deb0d0a7869dc5"
+  integrity sha1-mxuZooa2GNbWtx8VA96w0KeGncU=
 
 escape-html@~1.0.3:
   version "1.0.3"
@@ -7012,7 +7043,7 @@ locate-path@^5.0.0:
   dependencies:
     p-locate "^4.1.0"
 
-lodash-es@^4.17.14:
+lodash-es@^4.17.14, lodash-es@^4.2.1:
   version "4.17.15"
   resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.15.tgz#21bd96839354412f23d7a10340e5eac6ee455d78"
   integrity sha512-rlrc3yU3+JNOpZ9zj5pQtxnx2THmvRykwL4Xlxoa8I9lHBlVbbyPhgyPMioxVZ4NqyxaVVtaJnzsyOidQIhyyQ==
@@ -7067,7 +7098,7 @@ lodash.uniq@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
   integrity sha1-0CJTc662Uq3BvILklFM5qEJ1R3M=
 
-"lodash@>=3.5 <5", lodash@^4.17.11, lodash@^4.17.12, lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.5:
+"lodash@>=3.5 <5", lodash@^4.17.11, lodash@^4.17.12, lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.5, lodash@^4.2.1:
   version "4.17.15"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
   integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
@@ -7426,6 +7457,11 @@ mkdirp@0.5.1, mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.1:
   integrity sha1-MAV0OOrGz3+MR2fzhkjWaX11yQM=
   dependencies:
     minimist "0.0.8"
+
+moment@^2.24.0:
+  version "2.24.0"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.24.0.tgz#0d055d53f5052aa653c9f6eb68bb5d12bf5c2b5b"
+  integrity sha512-bV7f+6l2QigeBBZSM/6yTNq4P2fNpSWj/0e7jQcy87A8e7o2nAfP/34/2ky5Vw4B9S446EtIhodAzkFCcR4dQg==
 
 move-concurrently@^1.0.1:
   version "1.0.1"
@@ -9308,6 +9344,22 @@ react-app-polyfill@^1.0.5:
     regenerator-runtime "^0.13.3"
     whatwg-fetch "^3.0.0"
 
+react-bootstrap-sidebar@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/react-bootstrap-sidebar/-/react-bootstrap-sidebar-0.0.1.tgz#a6950e583c88c9f2a25c605695efc521301b597d"
+  integrity sha512-mf8buplcMm6REk1Yus6pY/5CU3+QigxpPbM+9/FLma3+qngBY5nYr+Ifw8ftOJCBHqyjJzQGfw4bk2L166a8Bg==
+
+react-datepicker@^2.12.0:
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/react-datepicker/-/react-datepicker-2.12.0.tgz#7c3898ff7a1ba0f32d3306ac68a908b825c09a1d"
+  integrity sha512-LlFK36MyQXLSMGB+DiZvPmVw+P1IeCvn2eX3bU1P32T6i8o7+b8LrUVYV9o7slXZMhqOjgTq2vYiXvdRpN/dlQ==
+  dependencies:
+    classnames "^2.2.6"
+    date-fns "^2.0.1"
+    prop-types "^15.7.2"
+    react-onclickoutside "^6.9.0"
+    react-popper "^1.3.4"
+
 react-dev-utils@^10.0.0:
   version "10.0.0"
   resolved "https://registry.yarnpkg.com/react-dev-utils/-/react-dev-utils-10.0.0.tgz#bd2d16426c7e4cbfed1b46fb9e2ac98ec06fcdfa"
@@ -9377,7 +9429,20 @@ react-loading-overlay@^1.0.1:
     prop-types "^15.6.2"
     react-transition-group "^2.5.0"
 
-react-popper@^1.3.6:
+react-onclickoutside@^6.9.0:
+  version "6.9.0"
+  resolved "https://registry.yarnpkg.com/react-onclickoutside/-/react-onclickoutside-6.9.0.tgz#a54bc317ae8cf6131a5d78acea55a11067f37a1f"
+  integrity sha512-8ltIY3bC7oGhj2nPAvWOGi+xGFybPNhJM0V1H8hY/whNcXgmDeaeoCMPPd8VatrpTsUWjb/vGzrmu6SrXVty3A==
+
+react-picker@^1.2.15:
+  version "1.2.15"
+  resolved "https://registry.yarnpkg.com/react-picker/-/react-picker-1.2.15.tgz#a089145040084dd5cc057fe76e6cfa6cf468c8b5"
+  integrity sha512-m6EoxcHj3JvmWg1Xc+d4ReZrgUg3q915w++5hYXsbhS7fE/RDOikLJEtvh85SYuSl9hbPpkwwczufysMusnj3Q==
+  dependencies:
+    es6-viewpoint "^0.1.3"
+    react-tapper "^0.1.17"
+
+react-popper@^1.3.4, react-popper@^1.3.6:
   version "1.3.7"
   resolved "https://registry.yarnpkg.com/react-popper/-/react-popper-1.3.7.tgz#f6a3471362ef1f0d10a4963673789de1baca2324"
   integrity sha512-nmqYTx7QVjCm3WUZLeuOomna138R1luC4EqkW3hxJUrAe+3eNz3oFCLYdnPwILfn0mX1Ew2c3wctrjlUMYYUww==
@@ -9490,6 +9555,11 @@ react-scripts@3.3.0:
     workbox-webpack-plugin "4.3.1"
   optionalDependencies:
     fsevents "2.1.2"
+
+react-tapper@^0.1.17:
+  version "0.1.18"
+  resolved "https://registry.yarnpkg.com/react-tapper/-/react-tapper-0.1.18.tgz#0b6976c1e115379d509e1d6726d3255f3be63778"
+  integrity sha512-eNcEg+3gX1qwdn6kVq4OegZHia4xw3W5WNUWf1FvGj0QCrBZsrCOx+vxMrcstmgH78dT37iJUPQmga4PIJplDQ==
 
 react-transition-group@^2.3.1, react-transition-group@^2.5.0:
   version "2.9.0"
@@ -9609,12 +9679,27 @@ redent@^3.0.0:
     indent-string "^4.0.0"
     strip-indent "^3.0.0"
 
+redux-localstorage@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/redux-localstorage/-/redux-localstorage-0.4.1.tgz#faf6d719c581397294d811473ffcedee065c933c"
+  integrity sha1-+vbXGcWBOXKU2BFHP/zt7gZckzw=
+
 redux-saga@^1.1.3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/redux-saga/-/redux-saga-1.1.3.tgz#9f3e6aebd3c994bbc0f6901a625f9a42b51d1112"
   integrity sha512-RkSn/z0mwaSa5/xH/hQLo8gNf4tlvT18qXDNvedihLcfzh+jMchDgaariQoehCpgRltEm4zHKJyINEz6aqswTw==
   dependencies:
     "@redux-saga/core" "^1.1.3"
+
+redux@^3.6.0:
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/redux/-/redux-3.7.2.tgz#06b73123215901d25d065be342eb026bc1c8537b"
+  integrity sha512-pNqnf9q1hI5HHZRBkj3bAngGZW/JMCmexDlOxw4XagXY2o1327nHH54LoTjiPJ0gizoqPDRqWyX/00g0hD6w+A==
+  dependencies:
+    lodash "^4.2.1"
+    lodash-es "^4.2.1"
+    loose-envify "^1.1.0"
+    symbol-observable "^1.0.3"
 
 redux@^4.0.0, redux@^4.0.4:
   version "4.0.5"
@@ -10706,7 +10791,7 @@ svgo@^1.0.0, svgo@^1.2.2:
     unquote "~1.1.1"
     util.promisify "~1.0.0"
 
-symbol-observable@^1.2.0:
+symbol-observable@^1.0.3, symbol-observable@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/symbol-observable/-/symbol-observable-1.2.0.tgz#c22688aed4eab3cdc2dfeacbb561660560a00804"
   integrity sha512-e900nM8RRtGhlV36KGEU9k65K3mPb1WV70OdjfxlG2EAuM1noi/E/BaW/uMhL7bPEssK8QV57vN3esixjUvcXQ==

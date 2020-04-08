@@ -46,6 +46,14 @@ export class Login extends React.Component<LoginProps, OwnState> {
         alert(error);
       });
   };
+  skip = () => {
+    this.props.setUser({
+      email: "",
+      isLogin: true,
+      uid: ""
+    });
+    this.props.history.push("/home");
+  };
   handleGoogle = () => {
     const provider = new firebase.auth.GoogleAuthProvider();
     firebase
@@ -134,6 +142,9 @@ export class Login extends React.Component<LoginProps, OwnState> {
                     </Row>
                     <p>or</p>
                     <Button onClick={this.handleGoogle}>Googleログイン</Button>
+                    <Row>
+                      <Button onClick={this.skip}>skip</Button>
+                    </Row>
                   </div>
                 </Col>
               </Row>
