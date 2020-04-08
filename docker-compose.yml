@@ -25,11 +25,9 @@ services:
     ports:
       - 8080:80
   mysql:
-    image: mysql
+    image: mysql:8.0
     container_name: mysql
-    build:
-      context: ./backend/docker/mysql
-      dockerfile: Dockerfile
+    command: --default-authentication-plugin=mysql_native_password
     ports:
       - 3306:3306
     environment:
@@ -37,6 +35,9 @@ services:
       MYSQL_DATABASE: app
       MYSQL_USER: app_user
       MYSQL_PASSWORD: user_pass
+    volumes:
+     - mysql:/var/lib/mysql
+     - ./backend/docker/mysql/initdb:/docker-entrypoint-initdb.d
   gocli:
     image: gocli
     container_name: gocli
@@ -76,3 +77,6 @@ services:
       - 80:80
     volumes:
       - ./frontend/build:/usr/share/nginx/html/
+volumes:
+  mysql:
+    driver: local

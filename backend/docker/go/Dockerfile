@@ -17,8 +17,12 @@ RUN apk --no-cache update && \
     bash \
     git
 
-RUN go get -u github.com/oxequa/realize && \
-    go get -u github.com/gorilla/mux
+RUN go get -u \
+    github.com/oxequa/realize \
+    github.com/gorilla/mux \
+    github.com/jinzhu/gorm \
+    github.com/go-sql-driver/mysql
+    
 
 # RUN go get -u \
 #     github.com/golang/dep/cmd/dep \
