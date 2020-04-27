@@ -85,6 +85,7 @@ const AddScheduleModal: React.FC<ScheduleActions & OwnProps> = props => {
       color: "pink"
     });
     props.setSchedule(newList);
+    props.toggle()
   };
   const hourSelectoer = () => {
     const list = [];
@@ -290,7 +291,7 @@ const AddScheduleModal: React.FC<ScheduleActions & OwnProps> = props => {
                 </Container>
               </ModalBody>
               <ModalFooter>
-                <Button type="submit" color="primary">
+                <Button color="primary" onClick={()=>handleOnSubmit(values)}>
                   作成
                 </Button>
                 <Button onClick={() => props.toggle()}>キャンセル</Button>

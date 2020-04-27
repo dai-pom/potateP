@@ -1,5 +1,5 @@
 import { createStore, combineReducers, applyMiddleware, compose } from "redux";
-// import rootSaga from "./sagas/saga";
+import rootSaga from "./sagas/root";
 import createSagaMiddleware from "redux-saga";
 import { userReducer, UserState } from "./states/user";
 import persistState from "redux-localstorage";
@@ -28,5 +28,5 @@ const store = createStore(
     persistState(undefined, "test", slicer)
   )
 );
-// sagaMiddleware.run(rootSaga);
+sagaMiddleware.run(rootSaga);
 export default store;

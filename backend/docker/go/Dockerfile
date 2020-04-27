@@ -1,28 +1,32 @@
-FROM golang:alpine3.10
-
+FROM golang:latest
 ARG APP_ROOT
 
+COPY ./serviceAccountKey.json /etc/serviceAccountKey.json
 RUN mkdir ${APP_ROOT}
 WORKDIR ${APP_ROOT}
+# COPY ./backend/src ${APP_ROOT}
+ENV GO111MODULE=on
 
-RUN apk --no-cache update && \
-    apk --no-cache upgrade && \
-    apk --no-cache add \
-    curl-dev \
-    freetype-dev \
-    g++ \
-    make \
-    autoconf \
-    openssl \
-    bash \
-    git
-
-RUN go get -u \
-    github.com/oxequa/realize \
-    github.com/gorilla/mux \
-    github.com/jinzhu/gorm \
-    github.com/go-sql-driver/mysql
-    
+# RUN apk --no-cache update && \
+#     apk --no-cache upgrade && \
+#     apk --no-cache add \
+#     curl-dev \
+#     freetype-dev \
+#     g++ \
+#     make \
+#     autoconf \
+#     openssl \
+#     bash \
+#     git
+# RUN go mod download
+RUN go get github.com/pilu/fresh
+#     github.com/gorilla/mux \
+#     github.com/jinzhu/gorm \
+#     github.com/go-sql-driver/mysql \
+#     firebase.google.com/go \
+#     firebase.google.com/go/auth \
+#     google.golang.org/api/optiona \
+#     github.com/rs/cors
 
 # RUN go get -u \
 #     github.com/golang/dep/cmd/dep \
@@ -44,4 +48,5 @@ RUN go get -u \
 #     golang.org/x/tools/cmd/goimports \
 #     github.com/PuerkitoBio/goquery
 
-CMD ["realize", "start", "--server"]
+# CMD ["realize", "start", "--server"]
+CMD ["fresh"]
