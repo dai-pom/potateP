@@ -2,15 +2,17 @@ import { reducerWithInitialState } from "typescript-fsa-reducers";
 import { userActions } from "../actions/user";
 
 export interface UserState {
-  email: string;
+  name: string;
   uid: string;
+  description:string;
   isLogin: boolean;
 }
 
 const initialState: UserState = {
-  email: "",
+  name: "",
   uid: "",
-  isLogin: false
+  isLogin: false,
+  description:""
 };
 
 export const userReducer = reducerWithInitialState(initialState).case(
@@ -18,4 +20,9 @@ export const userReducer = reducerWithInitialState(initialState).case(
   (state, user) => {
     return user;
   }
-);
+).case(
+  userActions.registerUser,
+  (state, user) => {
+    return user;
+  }
+);;

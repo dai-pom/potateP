@@ -34,9 +34,10 @@ export class SignUp extends React.Component<SignUpProps, OwnState> {
       .then(res => {
         console.log(res);
         this.props.setUser({
-          email: values.email,
+          name: values.email,
           isLogin: true,
-          uid: ""
+          uid: "",
+          description:""
         });
         this.props.history.push("/home");
       })

@@ -10,7 +10,7 @@ import {
   FormGroup,
   Input,
   Label,
-  Row
+  Row,
 } from "reactstrap";
 import * as Yup from "yup";
 import firebase from "../../../FireBase";
@@ -32,25 +32,27 @@ export class Login extends React.Component<LoginProps, OwnState> {
     firebase
       .auth()
       .signInWithEmailAndPassword(values.email, values.password)
-      .then(res => {
+      .then((res) => {
         console.log(res);
         this.props.setUser({
-          email: values.email,
+          name: values.email,
           isLogin: true,
-          uid: res.user?.uid || ""
+          uid: res.user?.uid || "",
+          description: "",
         });
         this.props.history.push("/home");
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
         alert(error);
       });
   };
   skip = () => {
     this.props.setUser({
-      email: "",
+      name: "",
       isLogin: true,
-      uid: ""
+      uid: "",
+      description: "",
     });
     this.props.history.push("/home");
   };
@@ -59,16 +61,26 @@ export class Login extends React.Component<LoginProps, OwnState> {
     firebase
       .auth()
       .signInWithPopup(provider)
-      .then(res => {
+      .then((res) => {
         console.log(res);
-        this.props.setUser({
-          email: res.user?.email || "",
-          isLogin: true,
-          uid: res.user?.uid || ""
+        res.user?.getIdToken().then((idToken) => {
+          localStorage.setItem("jwt", idToken.toString());
+          this.props.setUser({
+            name: res.user?.email || "",
+            isLogin: true,
+            uid: res.user?.uid || "",
+            description: "",
+          });
+          this.props.registerUser({
+            name: res.user?.email || "",
+            isLogin: true,
+            uid: res.user?.uid || "",
+            description: "",
+          });
         });
         this.props.history.push("/home");
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
         alert(error);
       });
@@ -78,12 +90,10 @@ export class Login extends React.Component<LoginProps, OwnState> {
       <Container>
         <Formik
           initialValues={{ email: "", password: "" }}
-          onSubmit={values => this.handleOnSubmit(values)}
+          onSubmit={(values) => this.handleOnSubmit(values)}
           validationSchema={Yup.object().shape({
-            email: Yup.string()
-              .email()
-              .required(),
-            password: Yup.string().required()
+            email: Yup.string().email().required(),
+            password: Yup.string().required(),
           })}
           render={({
             handleSubmit,
@@ -91,7 +101,7 @@ export class Login extends React.Component<LoginProps, OwnState> {
             handleBlur,
             values,
             errors,
-            touched
+            touched,
           }) => (
             <Form onSubmit={handleSubmit}>
               <Row>
