@@ -8,18 +8,41 @@ import {
   takeLatest,
 } from "redux-saga/effects";
 
-import { Action } from "typescript-fsa";
-import { registerUser } from "../api";
+import { registerUser, fetchUserDetail } from "../api/user";
 import { userActions } from "../actions/user";
 import { AxiosResponse } from "axios";
-
+export function* userRoot() {
+  yield takeLatest("REGISTER_USER", register);
+  yield takeLatest("FETCH_USER", fetchUser);
+}
+export function* fetchUser(action: ReturnType<typeof userActions.fetchUser>) {
+  const apiResult: AxiosResponse<any> = yield call(
+    fetchUserDetail,
+    action.payload
+  );
+  yield put(
+    userActions.setUser({
+      name: apiResult.data.Name,
+      email: apiResult.data.Email,
+      isLogin: true,
+      uid: apiResult.data.Id,
+      description: apiResult.data.Description,
+    })
+  );
+}
 export function* register(action: ReturnType<typeof userActions.setUser>) {
+  console.log("usersaga");
   const apiResult: AxiosResponse<any> = yield call(
     registerUser,
     action.payload
   );
-  console.log(apiResult.statusText);
-  //if (apiResult.data) {
-  //  yield put(userActions.setUser(apiResult.data.todo_list))
-  //}
+  yield put(
+    userActions.setUser({
+      name: apiResult.data.Name,
+      email: apiResult.data.Email,
+      isLogin: true,
+      uid: apiResult.data.Id,
+      description: apiResult.data.Description,
+    })
+  );
 }

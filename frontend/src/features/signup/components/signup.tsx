@@ -13,7 +13,7 @@ import {
   Input,
   Button,
   Label,
-  FormFeedback
+  FormFeedback,
 } from "reactstrap";
 import firebase from "../../../FireBase";
 interface OwnProps {}
@@ -31,17 +31,24 @@ export class SignUp extends React.Component<SignUpProps, OwnState> {
     firebase
       .auth()
       .createUserWithEmailAndPassword(values.email, values.password)
-      .then(res => {
-        console.log(res);
-        this.props.setUser({
-          name: values.email,
-          isLogin: true,
-          uid: "",
-          description:""
-        });
-        this.props.history.push("/home");
+      .then((res) => {
+        res.user
+          ?.getIdToken()
+          .then((idToken) => {
+            localStorage.setItem("jwt", idToken.toString());
+            this.props.registerUser({
+              name: values.name || "",
+              email: res.user?.email || "",
+              isLogin: true,
+              uid: res.user?.uid || "",
+              description: "",
+            });
+          })
+          .then(() => {
+            this.props.history.push("/home");
+          });
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
         alert(error);
       });
@@ -50,13 +57,12 @@ export class SignUp extends React.Component<SignUpProps, OwnState> {
     return (
       <Container>
         <Formik
-          initialValues={{ email: "", password: "" }}
-          onSubmit={values => this.handleOnSubmit(values)}
+          initialValues={{ email: "", password: "", name: "" }}
+          onSubmit={(values) => this.handleOnSubmit(values)}
           validationSchema={Yup.object().shape({
-            email: Yup.string()
-              .email()
-              .required(),
-            password: Yup.string().required()
+            email: Yup.string().email().required(),
+            name: Yup.string().required(),
+            password: Yup.string().required(),
           })}
           render={({
             handleSubmit,
@@ -64,13 +70,23 @@ export class SignUp extends React.Component<SignUpProps, OwnState> {
             handleBlur,
             values,
             errors,
-            touched
+            touched,
           }) => (
             <Form onSubmit={handleSubmit}>
               <Row>
                 <Col md={{ size: 6, offset: 3 }}>
                   <p style={{ textAlign: "center" }}>新規登録</p>
                   <FormGroup>
+                    <Label for="name">Name</Label>
+                    <Input
+                      type="text"
+                      name="name"
+                      id="name"
+                      value={values.name}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      invalid={touched.name && errors.name ? true : false}
+                    />
                     <Label for="name">Email</Label>
                     <Input
                       type="email"

@@ -1,9 +1,9 @@
-import {
-all,call,put,select,takeEvery,take,takeLatest
-} from "redux-saga/effects"
-import {register} from "./user"
+import { userRoot } from "./user";
+import { eventRoot, addEvent, fetchEvents } from "./event";
+import { takeLatest, call } from "redux-saga/effects";
 export default function* rootSaga() {
-  // yield takeLatest("ACTIONS_UPDATE_NAME", register)
-  yield takeLatest("REGISTER_USER", register)
-  // yield takeLatest("ACTIONS_UPDATE_TODOLIST", postTodo)
+  yield takeLatest("ADD_EVENT", addEvent);
+  yield takeLatest("FETCH_EVENTS", fetchEvents);
+  yield userRoot();
+  yield eventRoot();
 }
