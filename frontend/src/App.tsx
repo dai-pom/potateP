@@ -4,7 +4,7 @@ import Auth from "./Auth";
 import Home from "./features/home/containers/home";
 import Login from "./features/login/containers/login";
 import SignUp from "./features/signup/containers/signup";
-import NavigationBar from "./features/navigataionBar/components/navigationBar";
+import NavigationBar from "./features/navigataionBar/containers/navigationBar";
 import EventList from "./features/event/containers/eventList";
 import EventOverview from "./features/event/containers/event_overview";
 import schedule from "./features/event/containers/schedule";

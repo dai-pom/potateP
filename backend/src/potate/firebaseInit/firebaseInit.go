@@ -8,6 +8,7 @@ import (
 	"firebase.google.com/go/auth"
 	"google.golang.org/api/option"
 	"log"
+  "strings"
 )
 
 func initFirebase() *auth.Client {
@@ -24,5 +25,11 @@ func initFirebase() *auth.Client {
 	}
 	return auth
 }
+func VerifyToken(bearer string) error{
+	idToken := strings.Replace(bearer, "Bearer ", "", 1)
+	_, tokenErr := FirebaseApp.VerifyIDToken(context.Background(), idToken)
+  return tokenErr
+}
+
 
 var FirebaseApp = initFirebase()

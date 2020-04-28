@@ -34,13 +34,15 @@ export class Login extends React.Component<LoginProps, OwnState> {
       .signInWithEmailAndPassword(values.email, values.password)
       .then((res) => {
         console.log(res);
-        this.props.setUser({
-          name: values.email,
-          isLogin: true,
-          uid: res.user?.uid || "",
-          description: "",
-        });
-        this.props.history.push("/home");
+        res.user
+          ?.getIdToken()
+          .then((idToken) => {
+            localStorage.setItem("jwt", idToken.toString());
+            this.props.fetchUser(res.user?.uid!);
+          })
+          .then(() => {
+            this.props.history.push("/home");
+          });
       })
       .catch((error) => {
         console.log(error);
@@ -50,6 +52,7 @@ export class Login extends React.Component<LoginProps, OwnState> {
   skip = () => {
     this.props.setUser({
       name: "",
+      email: "",
       isLogin: true,
       uid: "",
       description: "",
@@ -63,22 +66,21 @@ export class Login extends React.Component<LoginProps, OwnState> {
       .signInWithPopup(provider)
       .then((res) => {
         console.log(res);
-        res.user?.getIdToken().then((idToken) => {
-          localStorage.setItem("jwt", idToken.toString());
-          this.props.setUser({
-            name: res.user?.email || "",
-            isLogin: true,
-            uid: res.user?.uid || "",
-            description: "",
+        res.user
+          ?.getIdToken()
+          .then((idToken) => {
+            localStorage.setItem("jwt", idToken.toString());
+            this.props.registerUser({
+              name: res.user?.displayName || "",
+              email: res.user?.email || "",
+              isLogin: true,
+              uid: res.user?.uid || "",
+              description: "",
+            });
+          })
+          .then(() => {
+            this.props.history.push("/home");
           });
-          this.props.registerUser({
-            name: res.user?.email || "",
-            isLogin: true,
-            uid: res.user?.uid || "",
-            description: "",
-          });
-        });
-        this.props.history.push("/home");
       })
       .catch((error) => {
         console.log(error);
