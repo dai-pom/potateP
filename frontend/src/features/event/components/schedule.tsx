@@ -1,55 +1,32 @@
 import * as React from "react";
 import { RouteComponentProps } from "react-router";
 import { Container, Navbar, NavItem, Nav, Row, Col, Button } from "reactstrap";
-import { WithEventSideBar } from "./sidebar";
+import WithEventSideBar from "../containers/sidebar";
 import st from "./schedule.module.css";
 import cn from "classnames";
 import { ScheduleDetailModal } from "./schedule_detail_modal";
 import { ScheduleState } from "../../../states/event/schedule";
 import { AppState } from "../../../store";
 import AddScheduleModal from "./add_schedule_modal";
-const items: ScheduleState[] = [
-  {
-    // id: 0,
-    sh: 7,
-    sm: 30,
-    eh: 11,
-    em: 45,
-    title: "映画",
-    description: "スターウォーズ",
-    color: "red"
-  },
-  {
-    // id: 1,
-    sh: 4,
-    sm: 30,
-    eh: 4,
-    em: 40,
-    title: "見えない",
-    description: "aaaaaaaaaaaa",
-    color: "gray"
-  },
-  {
-    // id: 2,
-    sh: 6,
-    sm: 30,
-    eh: 7,
-    em: 0,
-    title: "小さい",
-    description: "aaaaaaaaaaaa",
-    color: "#00FFFF"
-  }
-];
+import moment from "moment";
+import { ScheduleAction } from "../containers/schedule";
+
 type ComponentProps = RouteComponentProps<{
-  sid: string;
+  date: string;
   eid: string;
 }> &
-  Pick<AppState, "schedule">;
-export const Schedule: React.FC<ComponentProps> = props => {
+  Pick<AppState, "schedule"> &
+  ScheduleAction;
+export const Schedule: React.FC<ComponentProps> = (props) => {
   const params = props.match.params;
   const [isDetailModalOpen, setIsDetailModalOpen] = React.useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = React.useState(false);
   const [modalProp, setModalProp] = React.useState<ScheduleState>();
+
+  React.useEffect(() => {
+    props.fetchSchedule({ Eid: Number(params.eid), Date: params.date });
+  }, [props.schedule.length]);
+
   const DetailModalToggle = () => {
     setIsDetailModalOpen(!isDetailModalOpen);
   };
@@ -67,7 +44,7 @@ export const Schedule: React.FC<ComponentProps> = props => {
         <Row
           className={st.line}
           style={{
-            top: `${5 * i}vh`
+            top: `${5 * i}vh`,
           }}
         />
       );
@@ -81,7 +58,7 @@ export const Schedule: React.FC<ComponentProps> = props => {
         <div
           className={cn(st.time_disp)}
           style={{
-            top: `${2.5 + 5 * i}vh`
+            top: `${2.5 + 5 * i}vh`,
           }}
         >
           {`${i}:00`}
@@ -92,14 +69,15 @@ export const Schedule: React.FC<ComponentProps> = props => {
   };
   const item = () => {
     const list: JSX.Element[] = [];
-    props.schedule.forEach(item => {
-      const topPos = `${5 + item.sh * 5 + (5 * item.sm) / 60}vh`;
+    //のちのち一日の活動時間を変えられるようにしたときの為に
+    const zero = moment("00:00", "hh:mm");
+    props.schedule.forEach((item) => {
+      const topPos = `${
+        5 + (5 * moment(item.Start).diff(zero, "minute")) / 60
+      }vh`;
       const height = () => {
-        if (item.sm < item.em) {
-          return (item.eh - item.sh) * 5 + (5 * (item.em - item.sm)) / 60;
-        } else {
-          return (item.eh - item.sh) * 5 - (5 * (item.sm - item.em)) / 60;
-        }
+        // return (item.eh - item.sh) * 5 + (5 * (item.em - item.sm)) / 60;
+        return (5 * moment(item.End).diff(item.Start, "minute")) / 60;
       };
       list.push(
         <Row
@@ -108,20 +86,18 @@ export const Schedule: React.FC<ComponentProps> = props => {
             top: topPos,
             height: `${height()}vh`,
             width: "100%",
-            backgroundColor: item.color,
-            borderRadius: "10px"
+            backgroundColor: item.Color,
+            borderRadius: "10px",
           }}
           onClick={() => modalOpen(item)}
         >
           <Container>
             {height() > 2 && (
               <Row>
-                <Col sm="2">{`${item.sh}:${
-                  String(item.sm).length == 2 ? item.sm : `0${item.sm}`
-                } ~ ${item.eh}:${
-                  String(item.em).length == 2 ? item.em : `0${item.em}`
-                }`}</Col>
-                <Col sm="10">{item.title}</Col>
+                <Col sm="2">{`${moment(item.Start).format("hh:mm")}~${moment(
+                  item.End
+                ).format("hh:mm")}`}</Col>
+                <Col sm="10">{item.Title}</Col>
               </Row>
             )}
           </Container>
@@ -161,12 +137,14 @@ export const Schedule: React.FC<ComponentProps> = props => {
       </Container>
       <ScheduleDetailModal
         eid={params.eid}
-        sid={params.sid}
+        sid={params.date}
         isOpen={isDetailModalOpen}
         detail={modalProp}
         toggle={DetailModalToggle}
       />
       <AddScheduleModal
+        eid={params.eid}
+        date={moment(params.date, "YYYY-MM-DD")}
         isOpen={isAddModalOpen}
         toggle={AddModalToggle}
         nowSchedules={props.schedule}

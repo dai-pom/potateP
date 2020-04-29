@@ -11,7 +11,12 @@ export const fetchEventApi = (uid: string) => {
   });
 };
 export const addEventApi = (event: EventState) => {
-  return axios.post(url, event, {
+  const data = {
+    ...event,
+    StartDate: event.StartDate.format("YYYY-MM-DD"),
+    EndDate: event.EndDate.format("YYYY-MM-DD"),
+  };
+  return axios.post(url, data, {
     headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
   });
 };

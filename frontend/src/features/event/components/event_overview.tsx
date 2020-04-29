@@ -1,7 +1,7 @@
 import * as React from "react";
 import { RouteComponentProps } from "react-router";
 import { Container, Navbar, NavItem, Nav } from "reactstrap";
-import { WithEventSideBar } from "./sidebar";
+import WithEventSideBar from "../containers/sidebar";
 
 export class EventOverview extends React.Component<
   RouteComponentProps<{ eid: string }>

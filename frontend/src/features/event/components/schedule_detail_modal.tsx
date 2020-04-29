@@ -9,11 +9,11 @@ interface OwnProps {
   detail?: ScheduleState;
   toggle: () => void;
 }
-export const ScheduleDetailModal: React.FC<OwnProps> = props => {
+export const ScheduleDetailModal: React.FC<OwnProps> = (props) => {
   return (
     <Modal isOpen={props.isOpen}>
       <ModalHeader>スケジュール詳細</ModalHeader>
-      <ModalBody>{props.detail?.title}</ModalBody>
+      <ModalBody>{props.detail?.Title}</ModalBody>
       <ModalFooter>
         <Button onClick={props.toggle}>閉じる</Button>
       </ModalFooter>

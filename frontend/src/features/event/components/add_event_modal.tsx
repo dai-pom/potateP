@@ -24,8 +24,8 @@ interface ownProps {
 }
 
 export const AddEventModal: React.FC<ownProps & eventActions> = (props) => {
-  const [startDay, setStart] = useState(new Date());
-  const [endDay, setEnd] = useState(new Date());
+  const [startDay, setStart] = useState(moment());
+  const [endDay, setEnd] = useState(moment());
   const handleOnSubmit = (values: any) => {
     console.log("submit");
     props.addEvents({
@@ -44,27 +44,15 @@ export const AddEventModal: React.FC<ownProps & eventActions> = (props) => {
         initialValues={{
           name: "",
           description: "",
-          startDate: moment(new Date()).format("YYYY/MM/DD"),
-          endDate: moment(new Date()).format("YYYY/MM/DD"),
+          startDate: moment(),
+          endDate: moment(),
         }}
         validationSchema={Yup.object().shape({
           startDate: Yup.string()
             .required()
             .test("checkDate", "過去の日付は指定できません", (date) => {
-              const selectedDate = new Date(date);
-              const nowDate = new Date();
-              if (
-                new Date(
-                  selectedDate.getFullYear(),
-                  selectedDate.getMonth(),
-                  selectedDate.getDate()
-                ) >=
-                new Date(
-                  nowDate.getFullYear(),
-                  nowDate.getMonth(),
-                  nowDate.getDate()
-                )
-              ) {
+              const nowDate = moment();
+              if (nowDate.isSameOrBefore(date, "day")) {
                 return true;
               } else {
                 return false;
@@ -73,20 +61,8 @@ export const AddEventModal: React.FC<ownProps & eventActions> = (props) => {
           endDate: Yup.string()
             .required()
             .test("checkDate", "過去の日付は指定できません", (date) => {
-              const selectedDate = new Date(date);
-              const nowDate = new Date();
-              if (
-                new Date(
-                  selectedDate.getFullYear(),
-                  selectedDate.getMonth(),
-                  selectedDate.getDate()
-                ) >=
-                new Date(
-                  nowDate.getFullYear(),
-                  nowDate.getMonth(),
-                  nowDate.getDate()
-                )
-              ) {
+              const nowDate = moment();
+              if (nowDate.isSameOrBefore(date, "day")) {
                 return true;
               } else {
                 return false;
@@ -96,20 +72,7 @@ export const AddEventModal: React.FC<ownProps & eventActions> = (props) => {
               "checkLogic",
               "開始日より前の日付は指定できません",
               (date) => {
-                const selectedDate = new Date(date);
-                const selectStartDate = new Date(startDay);
-                if (
-                  new Date(
-                    selectedDate.getFullYear(),
-                    selectedDate.getMonth(),
-                    selectedDate.getDate()
-                  ) >=
-                  new Date(
-                    selectStartDate.getFullYear(),
-                    selectStartDate.getMonth(),
-                    selectStartDate.getDate()
-                  )
-                ) {
+                if (startDay.isSameOrBefore(date, "day")) {
                   return true;
                 } else {
                   return false;
@@ -144,7 +107,6 @@ export const AddEventModal: React.FC<ownProps & eventActions> = (props) => {
                     invalid={touched.name && errors.name ? true : false}
                     required={true}
                   />
-                  {values.startDate}
                   <FormFeedback>{errors.name}</FormFeedback>
                 </FormGroup>
                 <FormGroup>
@@ -174,18 +136,15 @@ export const AddEventModal: React.FC<ownProps & eventActions> = (props) => {
                       id="startDate"
                       selectsStart
                       selected={
-                        (values.startDate && new Date(values.startDate)) || null
+                        (values.startDate && values.startDate.toDate()) || null
                       }
                       startDate={moment(values.startDate).toDate()}
                       endDate={moment(values.endDate).toDate()}
-                      value={values.startDate}
+                      value={values.startDate.format("YYYY/MM/DD")}
                       onChange={(val) => {
                         if (val != null) {
-                          setFieldValue(
-                            "startDate",
-                            moment(val).format("YYYY/MM/DD")
-                          );
-                          setStart(val);
+                          setFieldValue("startDate", moment(val));
+                          setStart(moment(val));
                         }
                       }}
                       className={cn({
@@ -203,18 +162,15 @@ export const AddEventModal: React.FC<ownProps & eventActions> = (props) => {
                       selectsEnd
                       name="endDate"
                       id="endDate"
-                      startDate={moment(values.startDate).toDate()}
-                      endDate={moment(values.endDate).toDate()}
+                      startDate={values.startDate.toDate()}
+                      endDate={values.endDate.toDate()}
                       selected={
-                        (values.endDate && new Date(values.endDate)) || null
+                        (values.endDate && values.endDate.toDate()) || null
                       }
-                      value={values.endDate}
+                      value={values.endDate.format("YYYY/MM/DD")}
                       onChange={(val) => {
                         if (val != null) {
-                          setFieldValue(
-                            "endDate",
-                            moment(val).format("YYYY/MM/DD")
-                          );
+                          setFieldValue("endDate", moment(val));
                         }
                       }}
                       className={cn({

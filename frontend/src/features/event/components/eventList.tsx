@@ -18,6 +18,7 @@ import classNames from "classnames";
 import AddEventModal from "../containers/add_event_modal";
 import { AppState } from "../../../store";
 import { EventListActions } from "../containers/eventList";
+import moment, { isMoment } from "moment";
 interface OwnProps {}
 type EventListProps = OwnProps & AppState & EventListActions;
 
@@ -64,7 +65,8 @@ export const EventList: React.FC<EventListProps & RouteComponentProps> = (
                   <CardBody>
                     <CardTitle>{event.Name}</CardTitle>
                     <CardText>
-                      {event.StartDate}～{event.EndDate}
+                      {moment(event.StartDate).format("YYYY/MM/DD")}～
+                      {moment(event.EndDate).format("YYYY/MM/DD")}
                     </CardText>
                     <CardText>{event.Description}</CardText>
                   </CardBody>

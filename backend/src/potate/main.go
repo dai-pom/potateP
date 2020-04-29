@@ -2,7 +2,6 @@ package main
 
 import (
   "potate/user"
-  "potate/dbConnect"
   "potate/firebaseInit"
   "potate/event"
 	"fmt"
@@ -34,34 +33,7 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Hello world!")
 	fmt.Fprintf(w, "hello world!")
 }
-type User struct {
-	// gorm.Model
-	Id          string `json:id`
-	Name        string `json:name`
-	Description string `json:description`
-}
 
-func getUser(w http.ResponseWriter, r *http.Request) {
-	log.Println("Get article is called")
-	db, err := dbConnect.SqlConnect()
-	if err != nil {
-		panic(err.Error())
-	}
-	// defer db.Close()
-	rows, _ := db.Query("select * from users")
-	defer db.Close()
-	var users []User
-	for rows.Next() {
-		var user User //構造体Person型の変数personを定義
-		err := rows.Scan(&user.Id, &user.Name)
-		if err != nil {
-			panic(err.Error())
-		}
-		users = append(users, User{Id: user.Id, Name: user.Name})
-		// fmt.Println(user.id, user.name) //結果　1 yamada 2 suzuki
-	}
-	fmt.Fprint(w, users)
-}
 
 func main() {
 	log.Println("start server")
@@ -73,6 +45,8 @@ func main() {
 
 	r.HandleFunc("/event", event.AddEvent).Methods("POST")
 	r.HandleFunc("/event", event.FetchEvents).Queries("Id","{Id}").Methods("GET")
+	r.HandleFunc("/event/schedule", event.AddSchedule).Methods("POST")
+	r.HandleFunc("/event/schedule", event.FetchSchedule).Methods("GET")
 
   c := cors.New(cors.Options{
     AllowedOrigins:[]string{"*"},
