@@ -12,8 +12,8 @@ import { registerUser, fetchUserDetail } from "../api/user";
 import { userActions } from "../actions/user";
 import { AxiosResponse } from "axios";
 export function* userRoot() {
-  yield takeLatest("REGISTER_USER", register);
-  yield takeLatest("FETCH_USER", fetchUser);
+  yield takeEvery("REGISTER_USER", register);
+  yield takeEvery("FETCH_USER", fetchUser);
 }
 export function* fetchUser(action: ReturnType<typeof userActions.fetchUser>) {
   const apiResult: AxiosResponse<any> = yield call(

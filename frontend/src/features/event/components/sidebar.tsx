@@ -7,31 +7,25 @@ import {
   DropdownToggle,
   Dropdown,
   DropdownMenu,
-  DropdownItem
+  DropdownItem,
 } from "reactstrap";
 import classNames from "classnames";
 import st from "./sidebar.module.css";
 import { NavLink as RRNavLink } from "react-router-dom";
-import { prependOnceListener } from "cluster";
+import { AppState } from "../../../store";
+import moment from "moment";
 interface OwnProps {
   eid: string;
+  children: React.ReactNode;
 }
-interface OwnState {}
-const tempSchedule = [
-  {
-    time: "2020 / 02 / 12"
-  }
-];
-interface schedule {
-  time: string;
-}
+type SideBarProps = OwnProps & Omit<AppState, "schedule">;
 interface subMenuProps {
   title: string;
   urlImpl: string;
-  items: schedule[];
+  items: moment.Moment[];
   idx: number;
 }
-const RightDrop: React.FC<subMenuProps> = props => {
+const RightDrop: React.FC<subMenuProps> = (props) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const toggle = () => {
     setIsOpen(!isOpen);
@@ -47,8 +41,14 @@ const RightDrop: React.FC<subMenuProps> = props => {
             {props.items.map((value, idx) => {
               return (
                 <DropdownItem>
-                  <NavLink to={`${props.urlImpl}/${idx}`} tag={RRNavLink}>
-                    {value.time}
+                  <NavLink
+                    to={`${props.urlImpl}/${moment(value).format(
+                      "YYYY-MM-DD"
+                    )}`}
+                    tag={RRNavLink}
+                    key={idx}
+                  >
+                    {moment(value).format("YYYY/MM/DD")}
                   </NavLink>
                 </DropdownItem>
               );
@@ -59,53 +59,69 @@ const RightDrop: React.FC<subMenuProps> = props => {
     </Row>
   );
 };
-export class WithEventSideBar extends React.Component<OwnProps, OwnState> {
-  public linkList = [
+
+export const WithEventSideBar: React.FC<SideBarProps> = (props) => {
+  const schedule = () => {
+    const event = props.events.find((event) => event.Id === Number(props.eid));
+    if (event) {
+      const days: moment.Moment[] = [event.StartDate];
+      if (event) {
+        for (
+          let i = 0;
+          i < moment(event.EndDate).diff(event.StartDate, "day");
+          i++
+        ) {
+          days.push(moment(event.StartDate).add(1, "day"));
+        }
+      }
+      return days;
+    }
+    return [];
+  };
+  const linkList = [
     {
       title: "overview",
-      url: `/events/${this.props.eid}`
+      url: `/events/${props.eid}`,
     },
     {
       title: "schedule",
-      url: `/events/${this.props.eid}/schedule`,
-      children: tempSchedule
+      url: `/events/${props.eid}/schedule`,
+      children: schedule(),
     },
     {
       title: "piyo",
-      url: "/home"
-    }
+      url: "/home",
+    },
   ];
-  render() {
-    return (
-      <>
-        <div className={classNames(st.sidemenu)}>
-          <Container>
-            {this.linkList.map((value, idx) => {
-              if (value.children) {
-                return (
-                  <RightDrop
-                    title={value.title}
-                    urlImpl={value.url}
-                    items={value.children}
-                    idx={idx}
-                  />
-                );
-              } else {
-                return (
-                  <Row className={st.sideList} key={idx}>
-                    <Col xs={{ size: 10, offset: 1 }} className={st.link}>
-                      <NavLink tag={RRNavLink} to={value.url}>
-                        {value.title}
-                      </NavLink>
-                    </Col>
-                  </Row>
-                );
-              }
-            })}
-          </Container>
-        </div>
-        <div className={st.mainpain}>{this.props.children}</div>
-      </>
-    );
-  }
-}
+  return (
+    <>
+      <div className={classNames(st.sidemenu)}>
+        <Container>
+          {linkList.map((value, idx) => {
+            if (value.children) {
+              return (
+                <RightDrop
+                  title={value.title}
+                  urlImpl={value.url}
+                  items={value.children}
+                  idx={idx}
+                />
+              );
+            } else {
+              return (
+                <Row className={st.sideList} key={idx}>
+                  <Col xs={{ size: 10, offset: 1 }} className={st.link}>
+                    <NavLink tag={RRNavLink} to={value.url}>
+                      {value.title}
+                    </NavLink>
+                  </Col>
+                </Row>
+              );
+            }
+          })}
+        </Container>
+      </div>
+      <div className={st.mainpain}>{props.children}</div>
+    </>
+  );
+};

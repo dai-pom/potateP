@@ -1,4 +1,5 @@
 import * as React from "react";
+import moment from "moment";
 import {
   Modal,
   ModalBody,
@@ -11,7 +12,7 @@ import {
   FormFeedback,
   Row,
   Col,
-  Container
+  Container,
 } from "reactstrap";
 import { Action } from "typescript-fsa";
 import { ScheduleState } from "../../../states/event/schedule";
@@ -20,17 +21,24 @@ import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
+import { AppState } from "../../../store";
 
 interface ScheduleActions {
-  setSchedule: (v: ScheduleState[]) => Action<ScheduleState[]>;
+  addSchedule: (v: ScheduleState) => Action<ScheduleState>;
 }
-const mapDispatchToProps = (dispatch: Dispatch<Action<ScheduleState[]>>) => ({
-  setSchedule: (v: ScheduleState[]) => dispatch(scheduleAction.setSchedule(v))
+const mapDispatchToProps = (dispatch: Dispatch<Action<ScheduleState>>) => ({
+  addSchedule: (v: ScheduleState) => dispatch(scheduleAction.addSchedule(v)),
 });
+const mapStateToProps = (state: AppState) => ({
+  user: state.user,
+});
+
 interface OwnProps {
   toggle: () => void;
   isOpen: boolean;
   nowSchedules: ScheduleState[];
+  eid: string;
+  date: moment.Moment;
 }
 interface formProps {
   title: string;
@@ -40,52 +48,35 @@ interface formProps {
   eh: number;
   em: number;
 }
-const initialValues: formProps = {
+const initialValues = {
   title: "",
   description: "",
   sh: 0,
   sm: 0,
   eh: 0,
-  em: 0
+  em: 0,
 };
-const AddScheduleModal: React.FC<ScheduleActions & OwnProps> = props => {
-  const [sHour, setSH] = React.useState(0);
-  const [sMinute, setSM] = React.useState(0);
-  const [eHour, setEH] = React.useState(0);
-  const [eMinute, setEM] = React.useState(0);
-  const timeDuplicate = () => {
-    console.log("dup");
-    let result = true;
-    if (
-      props.nowSchedules.every(schedule => {
-        return (
-          (schedule.sh + schedule.sm / 60 < sHour + sMinute / 60 &&
-            sHour + sMinute / 60 <= schedule.eh + schedule.em / 60) ||
-          (schedule.sh + schedule.sm / 60 < eHour + eMinute / 60 &&
-            eHour + eMinute / 60 <= schedule.eh + schedule.em / 60)
-        );
-      })
-    ) {
-      result = false;
-    }
-    return result;
-  };
+const AddScheduleModal: React.FC<
+  ScheduleActions & OwnProps & Pick<AppState, "user">
+> = (props) => {
+  const [start, setStart] = React.useState(moment("00:00", "hh:mm"));
+  const [end, setEnd] = React.useState(moment("00:00", "hh:mm"));
+  const [err, setErr] = React.useState("");
+  const [errDetail, setErrDetail] = React.useState("");
 
-  const timeOver = () => {
-    let result = true;
-    if (sHour + sMinute / 60 >= eHour + eMinute / 60) {
-      result = false;
-    }
-    return result;
-  };
   const handleOnSubmit = (values: formProps) => {
-    const newList: ScheduleState[] = props.nowSchedules;
-    newList.push({
-      ...values,
-      color: "pink"
-    });
-    props.setSchedule(newList);
-    props.toggle()
+    const newSchedule: ScheduleState = {
+      Eid: Number(props.eid),
+      Date: props.date,
+      Title: values.title,
+      Description: values.description,
+      Start: start,
+      End: end,
+      Color: "pink",
+      UserName: props.user.name,
+    };
+    props.addSchedule(newSchedule);
+    props.toggle();
   };
   const hourSelectoer = () => {
     const list = [];
@@ -101,7 +92,37 @@ const AddScheduleModal: React.FC<ScheduleActions & OwnProps> = props => {
     }
     return list;
   };
-
+  const validateDate = (start: moment.Moment, end: moment.Moment) => {
+    console.log("validate");
+    console.log(start.format("HH:mm"));
+    console.log(end.format("HH:mm"));
+    if (start.isSameOrAfter(end)) {
+      setErr("終了時刻は開始時刻よりも後の時刻を指定してください。");
+      return;
+    }
+    if (
+      !props.nowSchedules.every((schedule) => {
+        if (
+          start.isBetween(schedule.Start, schedule.End, "minute", "[)") ||
+          moment(schedule.Start).isBetween(start, end, "minute", "[)")
+          // end.isBetween(schedule.start, schedule.end, "minute", "(]")
+        ) {
+          setErr("指定された時刻にはすでに予定が入っています");
+          setErrDetail(
+            `予定名：${schedule.Title} 時間：${moment(schedule.Start).format(
+              "HH:mm"
+            )}～${moment(schedule.End).format("HH:mm")}`
+          );
+          return false;
+        }
+        return true;
+      })
+    ) {
+      return;
+    }
+    setErr("");
+    setErrDetail("");
+  };
   return (
     <Modal isOpen={props.isOpen} size="lg">
       <ModalHeader>新規スケジュールの追加</ModalHeader>
@@ -109,52 +130,8 @@ const AddScheduleModal: React.FC<ScheduleActions & OwnProps> = props => {
         initialValues={initialValues}
         validationSchema={Yup.object().shape({
           name: Yup.string().required(),
-          sh: Yup.string()
-            .test(
-              "over",
-              "終了時刻は開始時刻よりも後の時刻を指定してください。",
-              () => timeOver()
-            )
-            .test(
-              "duplicate",
-              "指定された時刻にはすでに予定が入っています",
-              () => timeDuplicate()
-            ),
-          sm: Yup.string()
-            .test(
-              "over",
-              "終了時刻は開始時刻よりも後の時刻を指定してください。",
-              () => timeOver()
-            )
-            .test(
-              "duplicate",
-              "指定された時刻にはすでに予定が入っています",
-              () => timeDuplicate()
-            ),
-          eh: Yup.string()
-            .test(
-              "over",
-              "終了時刻は開始時刻よりも後の時刻を指定してください。",
-              () => timeOver()
-            )
-            .test(
-              "duplicate",
-              "指定された時刻にはすでに予定が入っています",
-              () => timeDuplicate()
-            ),
-          em: Yup.string()
-            .test(
-              "over",
-              "終了時刻は開始時刻よりも後の時刻を指定してください。",
-              () => timeOver()
-            )
-            .test(
-              "duplicate",
-              "指定された時刻にはすでに予定が入っています",
-              () => timeDuplicate()
-            )
         })}
-        onSubmit={values => handleOnSubmit(values)}
+        onSubmit={(values) => handleOnSubmit(values)}
         render={({
           handleSubmit,
           handleChange,
@@ -162,7 +139,7 @@ const AddScheduleModal: React.FC<ScheduleActions & OwnProps> = props => {
           values,
           errors,
           touched,
-          setFieldValue
+          setFieldValue,
         }) => (
           <>
             <Form onSubmit={() => handleOnSubmit(values)}>
@@ -206,9 +183,16 @@ const AddScheduleModal: React.FC<ScheduleActions & OwnProps> = props => {
                               name="sh"
                               id="sh"
                               value={values.sh}
-                              invalid={errors.sh ? true : false}
-                              onChange={e => {
-                                setSH(parseInt(e.currentTarget.value));
+                              invalid={err ? true : false}
+                              onChange={(e) => {
+                                setStart(() => {
+                                  const newState = moment(
+                                    `${e.currentTarget.value}:${values.sm}`,
+                                    "HH:mm"
+                                  );
+                                  validateDate(newState, end);
+                                  return newState;
+                                });
                                 setFieldValue(
                                   "sh",
                                   parseInt(e.currentTarget.value)
@@ -218,16 +202,23 @@ const AddScheduleModal: React.FC<ScheduleActions & OwnProps> = props => {
                               {hourSelectoer()}
                             </Input>
                           </Col>
-                          {" : "}
+                          {" 時 "}
                           <Col sm="5">
                             <Input
                               type="select"
                               name="sm"
                               id="sm"
                               value={values.sm}
-                              invalid={errors.sh ? true : false}
-                              onChange={e => {
-                                setSM(parseInt(e.currentTarget.value));
+                              invalid={err ? true : false}
+                              onChange={(e) => {
+                                setStart(() => {
+                                  const newState = moment(
+                                    `${values.sh}:${e.currentTarget.value}`,
+                                    "HH:mm"
+                                  );
+                                  validateDate(newState, end);
+                                  return newState;
+                                });
                                 setFieldValue(
                                   "sm",
                                   parseInt(e.currentTarget.value)
@@ -237,6 +228,7 @@ const AddScheduleModal: React.FC<ScheduleActions & OwnProps> = props => {
                               {minuteSelectoer()}
                             </Input>
                           </Col>
+                          {" 分 "}
                         </Row>
                       </FormGroup>
                     </Col>
@@ -250,9 +242,16 @@ const AddScheduleModal: React.FC<ScheduleActions & OwnProps> = props => {
                               name="eh"
                               id="eh"
                               value={values.eh}
-                              invalid={errors.sh ? true : false}
-                              onChange={e => {
-                                setEH(parseInt(e.currentTarget.value));
+                              invalid={err ? true : false}
+                              onChange={(e) => {
+                                setEnd(() => {
+                                  const newState = moment(
+                                    `${e.currentTarget.value}:${values.em}`,
+                                    "HH:mm"
+                                  );
+                                  validateDate(start, newState);
+                                  return newState;
+                                });
                                 setFieldValue(
                                   "eh",
                                   parseInt(e.currentTarget.value)
@@ -262,16 +261,23 @@ const AddScheduleModal: React.FC<ScheduleActions & OwnProps> = props => {
                               {hourSelectoer()}
                             </Input>
                           </Col>
-                          {" : "}
+                          {" 時 "}
                           <Col sm="5">
                             <Input
                               type="select"
                               name="em"
                               id="em"
                               value={values.em}
-                              invalid={errors.sh ? true : false}
-                              onChange={e => {
-                                setEM(parseInt(e.currentTarget.value));
+                              invalid={err ? true : false}
+                              onChange={(e) => {
+                                setEnd(() => {
+                                  const newState = moment(
+                                    `${values.eh}:${e.currentTarget.value}`,
+                                    "HH:mm"
+                                  );
+                                  validateDate(start, newState);
+                                  return newState;
+                                });
                                 setFieldValue(
                                   "em",
                                   parseInt(e.currentTarget.value)
@@ -281,17 +287,23 @@ const AddScheduleModal: React.FC<ScheduleActions & OwnProps> = props => {
                               {minuteSelectoer()}
                             </Input>
                           </Col>
+                          {"分"}
                         </Row>
                       </FormGroup>
                     </Col>
                   </Row>
                   <Row>
-                    <FormFeedback>{errors.sh}</FormFeedback>
+                    <Col sm={12}>
+                      <span style={{ color: "red" }}>{err}</span>
+                    </Col>
+                    <Col sm={12}>
+                      <span style={{ color: "red" }}>{errDetail}</span>
+                    </Col>
                   </Row>
                 </Container>
               </ModalBody>
               <ModalFooter>
-                <Button color="primary" onClick={()=>handleOnSubmit(values)}>
+                <Button color="primary" onClick={() => handleOnSubmit(values)}>
                   作成
                 </Button>
                 <Button onClick={() => props.toggle()}>キャンセル</Button>
@@ -303,4 +315,4 @@ const AddScheduleModal: React.FC<ScheduleActions & OwnProps> = props => {
     </Modal>
   );
 };
-export default connect(undefined, mapDispatchToProps)(AddScheduleModal);
+export default connect(mapStateToProps, mapDispatchToProps)(AddScheduleModal);

@@ -25,7 +25,7 @@ class App extends React.Component {
                   <Route exact path={"/events"} component={EventList} />
                   <Route exact path="/events/:eid" component={EventOverview} />
                   <Route
-                    path="/events/:eid/schedule/:sid"
+                    path="/events/:eid/schedule/:date"
                     component={schedule}
                   />
                 </div>

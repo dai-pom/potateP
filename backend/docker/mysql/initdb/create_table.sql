@@ -16,3 +16,16 @@ CREATE TABLE events
   EndDate  VARCHAR(20),
   INDEX(Id)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+CREATE TABLE schedule
+(
+  Eid INT,
+  Date VARCHAR(20),
+  End VARCHAR(20),
+  Start VARCHAR(20),
+  Title VARCHAR(40),
+  Description VARCHAR(256),
+  Color VARCHAR(20),
+  UserName VARCHAR(40)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
