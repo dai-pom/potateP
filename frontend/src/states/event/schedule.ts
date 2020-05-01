@@ -3,6 +3,7 @@ import moment from "moment";
 import { scheduleAction } from "../../actions/event/schedule";
 export interface ScheduleState {
   // id: number;
+  Id: number;
   Eid: number;
   Date: moment.Moment;
   Start: moment.Moment;

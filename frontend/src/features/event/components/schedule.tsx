@@ -4,7 +4,7 @@ import { Container, Navbar, NavItem, Nav, Row, Col, Button } from "reactstrap";
 import WithEventSideBar from "../containers/sidebar";
 import st from "./schedule.module.css";
 import cn from "classnames";
-import { ScheduleDetailModal } from "./schedule_detail_modal";
+import ScheduleDetailModal from "./schedule_detail_modal";
 import { ScheduleState } from "../../../states/event/schedule";
 import { AppState } from "../../../store";
 import AddScheduleModal from "./add_schedule_modal";
@@ -15,7 +15,7 @@ type ComponentProps = RouteComponentProps<{
   date: string;
   eid: string;
 }> &
-  Pick<AppState, "schedule"> &
+  Pick<AppState, "schedule" | "events"> &
   ScheduleAction;
 export const Schedule: React.FC<ComponentProps> = (props) => {
   const params = props.match.params;
@@ -23,9 +23,9 @@ export const Schedule: React.FC<ComponentProps> = (props) => {
   const [isAddModalOpen, setIsAddModalOpen] = React.useState(false);
   const [modalProp, setModalProp] = React.useState<ScheduleState>();
 
-  React.useEffect(() => {
-    props.fetchSchedule({ Eid: Number(params.eid), Date: params.date });
-  }, [props.schedule.length]);
+  // React.useEffect(() => {
+  //   props.fetchSchedule({ Eid: Number(params.eid), Date: params.date });
+  // }, [props.schedule.length]);
 
   const DetailModalToggle = () => {
     setIsDetailModalOpen(!isDetailModalOpen);
@@ -88,6 +88,7 @@ export const Schedule: React.FC<ComponentProps> = (props) => {
             width: "100%",
             backgroundColor: item.Color,
             borderRadius: "10px",
+            border: "1px",
           }}
           onClick={() => modalOpen(item)}
         >
@@ -106,11 +107,41 @@ export const Schedule: React.FC<ComponentProps> = (props) => {
     });
     return list;
   };
+  const DateController = () => {
+    const today = moment(params.date, "YYYY-MM-DD");
+    const event = props.events.find((event) => event.Id === Number(params.eid));
+    const move = React.useCallback((day: moment.Moment) => {
+      props.fetchSchedule({
+        Eid: Number(params.eid),
+        Date: moment(day).format("YYYY-MM-DD"),
+      });
+      props.history.push(
+        `/events/${params.eid}/schedule/${day.format("YYYY-MM-DD")}`
+      );
+    }, []);
+    return (
+      <Row style={{ marginTop: "10px" }}>
+        <Col sm={{ size: 2 }} style={{ textAlign: "center" }}>
+          {!today.isSame(event?.StartDate, "day") && (
+            <Button onClick={() => move(today.subtract(1, "day"))}>
+              前の日
+            </Button>
+          )}
+        </Col>
+        <Col sm={{ size: 2, offset: 8 }} style={{ textAlign: "center" }}>
+          {!today.isSame(event?.EndDate, "day") && (
+            <Button onClick={() => move(today.add(1, "day"))}>次の日</Button>
+          )}
+        </Col>
+      </Row>
+    );
+  };
   return (
     <WithEventSideBar eid={params.eid}>
       <Container>
         <Row>
           <h3>スケジュール</h3>
+          <h3>{params.date}</h3>
         </Row>
         <Row>
           <Col sm={{ offset: 10, size: 2 }}>
@@ -123,6 +154,7 @@ export const Schedule: React.FC<ComponentProps> = (props) => {
             </Button>
           </Col>
         </Row>
+        <DateController />
         <Row>
           <Col sm="1" className={cn(st.time)}>
             {timeDisp()}
@@ -139,7 +171,7 @@ export const Schedule: React.FC<ComponentProps> = (props) => {
         eid={params.eid}
         sid={params.date}
         isOpen={isDetailModalOpen}
-        detail={modalProp}
+        detail={modalProp!}
         toggle={DetailModalToggle}
       />
       <AddScheduleModal

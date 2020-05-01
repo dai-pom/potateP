@@ -2,6 +2,19 @@ import axios from "axios";
 import { ScheduleState, fetchScheduleProps } from "../states/event/schedule";
 
 const url: string = "http://localhost:3000/event/schedule";
+export const deleteScheduleApi = (param: number) => {
+  try {
+    const apiresult = axios.delete(url, {
+      params: {
+        Id: param,
+      },
+      headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+    });
+    return { isSuccess: true, response: apiresult, error: null };
+  } catch (error) {
+    return { isSuccess: false, data: null, error: error.response };
+  }
+};
 
 export const fetchScheduleApi = (param: fetchScheduleProps) => {
   return axios.get(url, {

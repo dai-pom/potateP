@@ -18,7 +18,7 @@ import classNames from "classnames";
 import AddEventModal from "../containers/add_event_modal";
 import { AppState } from "../../../store";
 import { EventListActions } from "../containers/eventList";
-import moment, { isMoment } from "moment";
+import moment from "moment";
 interface OwnProps {}
 type EventListProps = OwnProps & AppState & EventListActions;
 

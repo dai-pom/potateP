@@ -8,70 +8,74 @@ import {
   Dropdown,
   DropdownMenu,
   DropdownItem,
+  NavItem,
 } from "reactstrap";
 import classNames from "classnames";
 import st from "./sidebar.module.css";
-import { NavLink as RRNavLink } from "react-router-dom";
+import { NavLink as RRNavLink, RouteComponentProps } from "react-router-dom";
 import { AppState } from "../../../store";
 import moment from "moment";
+import { ScheduleAction } from "../containers/sidebar";
 interface OwnProps {
   eid: string;
   children: React.ReactNode;
 }
-type SideBarProps = OwnProps & Omit<AppState, "schedule">;
-interface subMenuProps {
-  title: string;
-  urlImpl: string;
-  items: moment.Moment[];
-  idx: number;
-}
-const RightDrop: React.FC<subMenuProps> = (props) => {
+type SideBarProps = OwnProps &
+  ScheduleAction &
+  Pick<AppState, "user" | "events">;
+
+export const WithEventSideBar: React.FC<SideBarProps> = (props) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const toggle = () => {
     setIsOpen(!isOpen);
   };
-  return (
-    <Row className={st.sideList} key={props.idx}>
-      <Col xs={{ size: 10, offset: 1 }} className={st.link}>
-        <Dropdown direction="right" isOpen={isOpen} toggle={toggle}>
-          <DropdownToggle tag={NavLink} caret>
-            {props.title}
-          </DropdownToggle>
-          <DropdownMenu>
-            {props.items.map((value, idx) => {
-              return (
-                <DropdownItem>
-                  <NavLink
-                    to={`${props.urlImpl}/${moment(value).format(
-                      "YYYY-MM-DD"
-                    )}`}
-                    tag={RRNavLink}
-                    key={idx}
-                  >
-                    {moment(value).format("YYYY/MM/DD")}
-                  </NavLink>
-                </DropdownItem>
-              );
-            })}
-          </DropdownMenu>
-        </Dropdown>
-      </Col>
-    </Row>
-  );
-};
-
-export const WithEventSideBar: React.FC<SideBarProps> = (props) => {
+  const moveSchedule = React.useCallback((day: moment.Moment) => {
+    props.fetchSchedule({
+      Eid: Number(props.eid),
+      Date: moment(day).format("YYYY-MM-DD"),
+    });
+  }, []);
+  const RightDrop = (
+    title: string,
+    urlImpl: string,
+    items: moment.Moment[],
+    idx: number
+  ) => {
+    return (
+      <Row className={st.sideList} key={idx}>
+        <Col xs={{ size: 10, offset: 1 }} className={st.link}>
+          <Dropdown direction="right" isOpen={isOpen} toggle={toggle}>
+            <DropdownToggle tag={NavLink} caret>
+              {title}
+            </DropdownToggle>
+            <DropdownMenu style={{ zIndex: 10 }}>
+              {items.map((value, idx) => {
+                return (
+                  <DropdownItem>
+                    <NavLink
+                      tag={RRNavLink}
+                      to={`${urlImpl}/${moment(value).format("YYYY-MM-DD")}`}
+                      onClick={() => moveSchedule(value)}
+                    >
+                      {moment(value).format("YYYY/MM/DD")}
+                    </NavLink>
+                  </DropdownItem>
+                );
+              })}
+            </DropdownMenu>
+          </Dropdown>
+        </Col>
+      </Row>
+    );
+  };
   const schedule = () => {
     const event = props.events.find((event) => event.Id === Number(props.eid));
     if (event) {
       const days: moment.Moment[] = [event.StartDate];
       if (event) {
-        for (
-          let i = 0;
-          i < moment(event.EndDate).diff(event.StartDate, "day");
-          i++
-        ) {
-          days.push(moment(event.StartDate).add(1, "day"));
+        const bet = moment(event.EndDate).diff(event.StartDate, "day");
+        for (let i = 0; i < bet; i++) {
+          days.push(moment(event.StartDate).add(i + 1, "day"));
         }
       }
       return days;
@@ -99,14 +103,7 @@ export const WithEventSideBar: React.FC<SideBarProps> = (props) => {
         <Container>
           {linkList.map((value, idx) => {
             if (value.children) {
-              return (
-                <RightDrop
-                  title={value.title}
-                  urlImpl={value.url}
-                  items={value.children}
-                  idx={idx}
-                />
-              );
+              return RightDrop(value.title, value.url, value.children, idx);
             } else {
               return (
                 <Row className={st.sideList} key={idx}>

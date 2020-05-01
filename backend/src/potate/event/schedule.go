@@ -2,12 +2,14 @@ package event
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"potate/dbConnect"
 )
 
 type Schedule struct {
+  Id        int `json.id`
   Eid            int `json.eid`
   Date       string `json.date`
   Title          string `json.title`
@@ -38,11 +40,14 @@ func AddSchedule(w http.ResponseWriter ,r *http.Request){
 	}
   log.Printf(schedule.Date)
 	defer stmt.Close()
-  _, err = stmt.Exec(schedule.Eid,schedule.Date,schedule.Title,schedule.Description,schedule.Start,schedule.End,schedule.Color,schedule.UserName)
+  res, err := stmt.Exec(schedule.Eid,schedule.Date,schedule.Title,schedule.Description,schedule.Start,schedule.End,schedule.Color,schedule.UserName)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+  id ,err := res.LastInsertId()
+  
+  fmt.Fprint(w,id)
   return
 }
 func FetchSchedule(w http.ResponseWriter,r *http.Request){
@@ -68,7 +73,7 @@ func FetchSchedule(w http.ResponseWriter,r *http.Request){
   }
   for rows.Next(){
     var result Schedule
-    err = rows.Scan(&result.Eid,&result.Date,&result.End,&result.Start,&result.Title,&result.Description,&result.Color,&result.UserName)
+    err = rows.Scan(&result.Id,&result.Eid,&result.Date,&result.End,&result.Start,&result.Title,&result.Description,&result.Color,&result.UserName)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -78,3 +83,23 @@ func FetchSchedule(w http.ResponseWriter,r *http.Request){
   response ,err := json.Marshal(schedule)
   w.Write(response)
 }
+func DeleteSchedule(w http.ResponseWriter,r *http.Request){
+   Id := r.URL.Query().Get("Id")
+	db, err := dbConnect.SqlConnect()
+	if err != nil {
+		log.Printf("err 2")
+		return
+	}
+  stmt,err := db.Prepare("delete  from schedule where Id = ?")
+	if err != nil {
+		log.Printf("err 3")
+		log.Println(err)
+	}
+	defer stmt.Close()
+  _,err = stmt.Exec(Id)
+  if err != nil {
+   w.WriteHeader(http.StatusNotFound) 
+  }
+  return
+}
+

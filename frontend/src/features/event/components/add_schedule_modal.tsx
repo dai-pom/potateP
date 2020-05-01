@@ -65,18 +65,22 @@ const AddScheduleModal: React.FC<
   const [errDetail, setErrDetail] = React.useState("");
 
   const handleOnSubmit = (values: formProps) => {
-    const newSchedule: ScheduleState = {
-      Eid: Number(props.eid),
-      Date: props.date,
-      Title: values.title,
-      Description: values.description,
-      Start: start,
-      End: end,
-      Color: "pink",
-      UserName: props.user.name,
-    };
-    props.addSchedule(newSchedule);
-    props.toggle();
+    validateDate(start, end);
+    if (err == "") {
+      const newSchedule: ScheduleState = {
+        Id: NaN,
+        Eid: Number(props.eid),
+        Date: props.date,
+        Title: values.title,
+        Description: values.description,
+        Start: start,
+        End: end,
+        Color: "pink",
+        UserName: props.user.name,
+      };
+      props.addSchedule(newSchedule);
+      props.toggle();
+    }
   };
   const hourSelectoer = () => {
     const list = [];
@@ -98,6 +102,7 @@ const AddScheduleModal: React.FC<
     console.log(end.format("HH:mm"));
     if (start.isSameOrAfter(end)) {
       setErr("終了時刻は開始時刻よりも後の時刻を指定してください。");
+      setErrDetail("");
       return;
     }
     if (
@@ -129,7 +134,7 @@ const AddScheduleModal: React.FC<
       <Formik
         initialValues={initialValues}
         validationSchema={Yup.object().shape({
-          name: Yup.string().required(),
+          name: Yup.string().required("required"),
         })}
         onSubmit={(values) => handleOnSubmit(values)}
         render={({
@@ -152,7 +157,7 @@ const AddScheduleModal: React.FC<
                       name="title"
                       id="title"
                       value={values.title}
-                      invalid={touched.title && errors.title ? true : false}
+                      invalid={errors.title ? true : false}
                       required={true}
                       onChange={handleChange}
                     />
@@ -303,7 +308,11 @@ const AddScheduleModal: React.FC<
                 </Container>
               </ModalBody>
               <ModalFooter>
-                <Button color="primary" onClick={() => handleOnSubmit(values)}>
+                <Button
+                  color="primary"
+                  onClick={() => handleOnSubmit(values)}
+                  disabled={err != "" || errors.title != undefined}
+                >
                   作成
                 </Button>
                 <Button onClick={() => props.toggle()}>キャンセル</Button>
