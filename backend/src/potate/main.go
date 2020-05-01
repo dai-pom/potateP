@@ -47,10 +47,12 @@ func main() {
 	r.HandleFunc("/event", event.FetchEvents).Queries("Id","{Id}").Methods("GET")
 	r.HandleFunc("/event/schedule", event.AddSchedule).Methods("POST")
 	r.HandleFunc("/event/schedule", event.FetchSchedule).Methods("GET")
+	r.HandleFunc("/event/schedule", event.DeleteSchedule).Methods("DELETE")
 
   c := cors.New(cors.Options{
     AllowedOrigins:[]string{"*"},
     AllowedHeaders:[]string{"*"},
+    AllowedMethods: []string{"GET","POST","DELETE"},
     AllowCredentials:true,
   })
   secureHandler := token(r)

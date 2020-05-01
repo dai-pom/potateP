@@ -8,6 +8,7 @@ import NavigationBar from "./features/navigataionBar/containers/navigationBar";
 import EventList from "./features/event/containers/eventList";
 import EventOverview from "./features/event/containers/event_overview";
 import schedule from "./features/event/containers/schedule";
+import CheckError from "./checkError";
 
 class App extends React.Component {
   render() {
@@ -16,21 +17,29 @@ class App extends React.Component {
         <div className="App">
           <Switch>
             <Route exact path={"/"} component={Login} />
-            <Route path={"/signup"} component={SignUp} />
-            <Auth>
+            <CheckError>
               <Switch>
-                <div>
-                  <NavigationBar />
-                  <Route path={"/home"} component={Home} />
-                  <Route exact path={"/events"} component={EventList} />
-                  <Route exact path="/events/:eid" component={EventOverview} />
-                  <Route
-                    path="/events/:eid/schedule/:date"
-                    component={schedule}
-                  />
-                </div>
+                <Route path={"/signup"} component={SignUp} />
+                <Auth>
+                  <Switch>
+                    <div>
+                      <NavigationBar />
+                      <Route path={"/home"} component={Home} />
+                      <Route exact path={"/events"} component={EventList} />
+                      <Route
+                        exact
+                        path="/events/:eid"
+                        component={EventOverview}
+                      />
+                      <Route
+                        path="/events/:eid/schedule/:date"
+                        component={schedule}
+                      />
+                    </div>
+                  </Switch>
+                </Auth>
               </Switch>
-            </Auth>
+            </CheckError>
           </Switch>
         </div>
       </BrowserRouter>

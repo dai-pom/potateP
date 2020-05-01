@@ -20,6 +20,7 @@ const mapDispatchToProps = (
 
 const mapStateToProps = (state: AppState) => ({
   schedule: state.schedule,
+  events: state.events,
 });
 
 export default withRouter(
