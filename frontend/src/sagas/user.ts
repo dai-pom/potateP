@@ -8,9 +8,11 @@ import {
   takeLatest,
 } from "redux-saga/effects";
 
-import { registerUser, fetchUserDetail } from "../api/user";
+import { registerUser, fetchUserDetail, searchUserApi } from "../api/user";
 import { userActions } from "../actions/user";
 import { AxiosResponse } from "axios";
+import { ApiResponse } from "../api/api";
+import { userInitialState } from "../states/user";
 export function* userRoot() {
   yield takeEvery("REGISTER_USER", register);
   yield takeEvery("FETCH_USER", fetchUser);
@@ -30,8 +32,27 @@ export function* fetchUser(action: ReturnType<typeof userActions.fetchUser>) {
     })
   );
 }
+export function* searchUser(
+  action: ReturnType<typeof userActions.fetchSearchUser>
+) {
+  const apiResult: ApiResponse = yield call(searchUserApi, action.payload);
+  if (apiResult.isSuccess) {
+    console.log("seikou");
+    yield put(
+      userActions.setSearchUser({
+        email: apiResult.response.data.Email,
+        name: apiResult.response.data.Name,
+        isLogin: false,
+        uid: apiResult.response.data.Id,
+        description: apiResult.response.data.Description,
+      })
+    );
+  } else {
+    console.log("sippai");
+    yield put(userActions.setSearchUser(userInitialState));
+  }
+}
 export function* register(action: ReturnType<typeof userActions.setUser>) {
-  console.log("usersaga");
   const apiResult: AxiosResponse<any> = yield call(
     registerUser,
     action.payload

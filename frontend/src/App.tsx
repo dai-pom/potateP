@@ -9,6 +9,7 @@ import EventList from "./features/event/containers/eventList";
 import EventOverview from "./features/event/containers/event_overview";
 import schedule from "./features/event/containers/schedule";
 import CheckError from "./checkError";
+import MemberList from "./features/event/containers/member";
 
 class App extends React.Component {
   render() {
@@ -34,6 +35,10 @@ class App extends React.Component {
                       <Route
                         path="/events/:eid/schedule/:date"
                         component={schedule}
+                      />
+                      <Route
+                        path="/events/:eid/member"
+                        component={MemberList}
                       />
                     </div>
                   </Switch>

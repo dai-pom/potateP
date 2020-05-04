@@ -31,3 +31,9 @@ CREATE TABLE schedule
   INDEX(Id)
 ) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
+CREATE TABLE eventMember
+(
+  EventId INT,
+  UserId VARCHAR(64)
+) DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+

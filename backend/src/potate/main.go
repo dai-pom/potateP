@@ -42,12 +42,15 @@ func main() {
 
 	r.HandleFunc("/user/register", user.RegisterUser).Methods("POST")
 	r.HandleFunc("/user/fetch", user.FetchUser).Queries("Id","{Id}").Methods("GET")
+	r.HandleFunc("/user/fetch/email", user.FetchUserByEmail).Methods("GET")
 
 	r.HandleFunc("/event", event.AddEvent).Methods("POST")
 	r.HandleFunc("/event", event.FetchEvents).Queries("Id","{Id}").Methods("GET")
 	r.HandleFunc("/event/schedule", event.AddSchedule).Methods("POST")
 	r.HandleFunc("/event/schedule", event.FetchSchedule).Methods("GET")
 	r.HandleFunc("/event/schedule", event.DeleteSchedule).Methods("DELETE")
+	r.HandleFunc("/event/member", event.FetchEventMember).Methods("GET")
+	r.HandleFunc("/event/member", event.AddEventMember).Methods("POST")
 
   c := cors.New(cors.Options{
     AllowedOrigins:[]string{"*"},

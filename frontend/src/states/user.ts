@@ -9,17 +9,23 @@ export interface UserState {
   isLogin: boolean;
 }
 
-const initialState: UserState = {
+export const userInitialState: UserState = {
   name: "",
   uid: "",
   email: "",
   isLogin: false,
   description: "",
 };
-export const userReducer = reducerWithInitialState(initialState)
+export const userReducer = reducerWithInitialState(userInitialState)
   .case(userActions.setUser, (state, user) => {
     return user;
   })
   .case(userActions.registerUser, (state, user) => {
     return user;
   });
+
+export const searchedUserReducer = reducerWithInitialState(
+  userInitialState
+).case(userActions.setSearchUser, (state, user) => {
+  return user;
+});

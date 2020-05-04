@@ -97,9 +97,6 @@ const AddScheduleModal: React.FC<
     return list;
   };
   const validateDate = (start: moment.Moment, end: moment.Moment) => {
-    console.log("validate");
-    console.log(start.format("HH:mm"));
-    console.log(end.format("HH:mm"));
     if (start.isSameOrAfter(end)) {
       setErr("終了時刻は開始時刻よりも後の時刻を指定してください。");
       setErrDetail("");

@@ -20,7 +20,7 @@ type User struct {
 }
 
 func FetchUser(w http.ResponseWriter, r *http.Request) {
-  Id := r.URL.Query()["Id"]
+  Id := r.URL.Query().Get("Id")
 	var user User
 	db, err := dbConnect.SqlConnect()
 	if err != nil {
@@ -32,11 +32,27 @@ func FetchUser(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "err 3")
 	}
 	defer stmt.Close()
-	err = stmt.QueryRow(Id[0]).Scan(&user.Id,&user.Name,&user.Email,&user.Description)
+	err = stmt.QueryRow(Id).Scan(&user.Id,&user.Name,&user.Email,&user.Description)
   response ,err := json.Marshal(user)
   w.Write(response)
 }
-
+func FetchUserByEmail(w http.ResponseWriter, r *http.Request) {
+  Email := r.URL.Query().Get("Email")
+  var user User
+	db, err := dbConnect.SqlConnect()
+	if err != nil {
+		log.Printf("err 2")
+		return
+	}
+  stmt,err := db.Prepare("select * from users where Email = ?")
+	if err != nil {
+		fmt.Fprintf(w, "err 3")
+	}
+	defer stmt.Close()
+	err = stmt.QueryRow(Email).Scan(&user.Id,&user.Name,&user.Email,&user.Description)
+  response ,err := json.Marshal(user)
+  w.Write(response)
+}
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	var user User

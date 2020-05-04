@@ -35,8 +35,7 @@ func AddSchedule(w http.ResponseWriter ,r *http.Request){
 		return
 	}
   stmt,err := db.Prepare("insert into schedule (Eid,Date,Title,Description,Start,End,Color,UserName) values (?,?,?,?,?,?,?,?)")
-	if err != nil {
-		log.Println(err)
+	if err != nil { log.Println(err)
 	}
   log.Printf(schedule.Date)
 	defer stmt.Close()
