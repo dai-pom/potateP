@@ -28,7 +28,6 @@ interface OwnState {
 
 export class Login extends React.Component<LoginProps, OwnState> {
   handleOnSubmit = (values: any) => {
-    console.log("submit");
     firebase
       .auth()
       .signInWithEmailAndPassword(values.email, values.password)
@@ -38,7 +37,7 @@ export class Login extends React.Component<LoginProps, OwnState> {
           ?.getIdToken()
           .then((idToken) => {
             localStorage.setItem("jwt", idToken.toString());
-            this.props.fetchUser(res.user?.uid!);
+            return this.props.fetchUser(res.user?.uid!);
           })
           .then(() => {
             this.props.history.push("/home");

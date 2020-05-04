@@ -93,8 +93,8 @@ export const WithEventSideBar: React.FC<SideBarProps> = (props) => {
       children: schedule(),
     },
     {
-      title: "piyo",
-      url: "/home",
+      title: "member",
+      url: `/events/${props.eid}/member`,
     },
   ];
   return (

@@ -1,17 +1,20 @@
 import { createStore, combineReducers, applyMiddleware, compose } from "redux";
 import rootSaga from "./sagas/root";
 import createSagaMiddleware from "redux-saga";
-import { userReducer, UserState } from "./states/user";
+import { userReducer, UserState, searchedUserReducer } from "./states/user";
 import persistState from "redux-localstorage";
 import { scheduleReducer, ScheduleState } from "./states/event/schedule";
 import { EventState, eventReducer } from "./states/event/event";
 import { ErrorState, errorReducer } from "./states/error";
+import { memberReducer } from "./states/event/member";
 
 export type AppState = {
   user: UserState;
   schedule: ScheduleState[];
   events: EventState[];
   error: ErrorState;
+  member: UserState[];
+  searchedUser: UserState;
 };
 const storeEnhancers =
   (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
@@ -31,6 +34,8 @@ const rootReducer = (state: any, action: any) => {
     schedule: scheduleReducer,
     events: eventReducer,
     error: errorReducer,
+    member: memberReducer,
+    searchedUser: searchedUserReducer,
   })(state, action);
 };
 const store = createStore(
