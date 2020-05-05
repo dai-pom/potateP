@@ -29,7 +29,7 @@ export const EventList: React.FC<EventListProps & RouteComponentProps> = (
   const [hover, setHover] = useState(-1);
   useEffect(() => {
     props.fetchEvents(props.user.uid);
-  }, [props.events.length]);
+  }, []);
   const modalToggle = () => {
     setModal(!modal);
   };

@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"potate/dbConnect"
+	"potate/firebaseInit"
 )
 
 type Schedule struct {
@@ -21,14 +22,21 @@ type Schedule struct {
 }
 
 func AddSchedule(w http.ResponseWriter ,r *http.Request){
+	Uid, err := firebaseInit.GetUidByToken(r)
 	decoder := json.NewDecoder(r.Body)
   var schedule Schedule
-	err := decoder.Decode(&schedule)
+	err = decoder.Decode(&schedule)
 	if err != nil {
 		log.Printf("err 1")
     log.Println(err)
 		return
 	}
+
+  if CheckEventAuth(Uid,schedule.Eid) == false{
+	  w.WriteHeader(http.StatusBadRequest)
+    return 
+  }
+
 	db, err := dbConnect.SqlConnect()
 	if err != nil {
 		log.Printf("err 2")

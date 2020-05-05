@@ -4,7 +4,7 @@ import createSagaMiddleware from "redux-saga";
 import { userReducer, UserState, searchedUserReducer } from "./states/user";
 import persistState from "redux-localstorage";
 import { scheduleReducer, ScheduleState } from "./states/event/schedule";
-import { EventState, eventReducer } from "./states/event/event";
+import { EventState, eventsReducer, eventReducer } from "./states/event/event";
 import { ErrorState, errorReducer } from "./states/error";
 import { memberReducer } from "./states/event/member";
 
@@ -12,6 +12,7 @@ export type AppState = {
   user: UserState;
   schedule: ScheduleState[];
   events: EventState[];
+  event: EventState;
   error: ErrorState;
   member: UserState[];
   searchedUser: UserState;
@@ -32,7 +33,8 @@ const rootReducer = (state: any, action: any) => {
   return combineReducers<AppState>({
     user: userReducer,
     schedule: scheduleReducer,
-    events: eventReducer,
+    events: eventsReducer,
+    event: eventReducer,
     error: errorReducer,
     member: memberReducer,
     searchedUser: searchedUserReducer,

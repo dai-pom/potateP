@@ -31,10 +31,30 @@ const CheckError: React.FC<ErrorProps> = (props) => {
     props.setError({ code: NaN });
     props.history.push("/");
   };
+  const goHome = () => {
+    props.setError({ code: NaN });
+    props.history.push("/home");
+  };
   const page = () => {
     if (props.error.code == 403) {
       props.logout();
-      return <ErrorPage403 callback={goLogin} />;
+      return (
+        <ErrorPage
+          callback={goLogin}
+          statusCode={403}
+          message="認証失敗"
+          operationMessage="ログイン画面に戻る"
+        />
+      );
+    } else if (props.error.code == 400) {
+      return (
+        <ErrorPage
+          callback={goHome}
+          statusCode={400}
+          message="指定のコンテンツにアクセスする権限が無いか、コンテンツが存在しません"
+          operationMessage="ホームに戻る"
+        />
+      );
     } else {
       return props.children;
     }
@@ -47,8 +67,11 @@ export default withRouter(
 
 interface OwnProps {
   callback: () => void;
+  statusCode: number;
+  message: string;
+  operationMessage: string;
 }
-const ErrorPage403: React.FC<OwnProps> = (props) => {
+const ErrorPage: React.FC<OwnProps> = (props) => {
   return (
     <Container>
       <Row>
@@ -56,12 +79,14 @@ const ErrorPage403: React.FC<OwnProps> = (props) => {
           <Container>
             <Row>
               <Col style={{ alignItems: "center" }}>
-                <h1>403 認証失敗</h1>
+                <h1>
+                  {props.statusCode}：{props.message}
+                </h1>
               </Col>
             </Row>
             <Row>
               <Col style={{ alignItems: "center" }}>
-                <a onClick={() => props.callback()}>ログイン画面に戻る</a>
+                <a onClick={() => props.callback()}>{props.operationMessage}</a>
               </Col>
             </Row>
           </Container>

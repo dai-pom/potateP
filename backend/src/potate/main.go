@@ -45,7 +45,8 @@ func main() {
 	r.HandleFunc("/user/fetch/email", user.FetchUserByEmail).Methods("GET")
 
 	r.HandleFunc("/event", event.AddEvent).Methods("POST")
-	r.HandleFunc("/event", event.FetchEvents).Queries("Id","{Id}").Methods("GET")
+	r.HandleFunc("/event", event.FetchEvents).Methods("GET")
+	r.HandleFunc("/event/id", event.FetchEventById).Methods("GET")
 	r.HandleFunc("/event/schedule", event.AddSchedule).Methods("POST")
 	r.HandleFunc("/event/schedule", event.FetchSchedule).Methods("GET")
 	r.HandleFunc("/event/schedule", event.DeleteSchedule).Methods("DELETE")

@@ -2,9 +2,10 @@ import { takeEvery, takeLatest, call, select, put } from "redux-saga/effects";
 import { eventActions } from "../actions/event/event";
 import {
   addEventApi,
-  fetchEventApi,
+  fetchEventListApi,
   fetchMemberApi,
   addMemberApi,
+  fetchEventApi,
 } from "../api/event";
 import { AxiosResponse } from "axios";
 import { AppState } from "../store";
@@ -14,14 +15,28 @@ import { ApiResponse } from "../api/api";
 import { userActions } from "../actions/user";
 import { fetchUserDetail } from "../api/user";
 import { UserState } from "../states/user";
+import { eventInitial } from "../states/event/event";
 export function* eventRoot() {
   yield takeEvery("ADD_EVENT", addEvent);
   yield takeEvery("FETCH_EVENT", fetchEvents);
 }
+export function* fetchEvent(
+  action: ReturnType<typeof eventActions.fetchEvent>
+) {
+  const apiresult: ApiResponse = yield call(fetchEventApi, action.payload);
+  if (apiresult.isSuccess) {
+    yield put(eventActions.setEvent(apiresult.response.data));
+  } else if (!apiresult.isSuccess && apiresult.error.status == 400) {
+    yield put(errorActions.setError({ code: apiresult.error.status }));
+    yield put(eventActions.setEvent(eventInitial));
+  } else {
+    yield put(eventActions.setEvent(eventInitial));
+  }
+}
 export function* fetchEvents(
   action: ReturnType<typeof eventActions.fetchEvents>
 ) {
-  const apiresult: ApiResponse = yield call(fetchEventApi, action.payload);
+  const apiresult: ApiResponse = yield call(fetchEventListApi, action.payload);
   if (apiresult.isSuccess && apiresult.response.data != null) {
     const events = apiresult.response.data.map((event: any) => {
       event.StartDate = moment(event.StartDate);
