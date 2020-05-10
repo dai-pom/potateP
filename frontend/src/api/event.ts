@@ -3,7 +3,20 @@ import { EventState } from "../states/event/event";
 import { AddMemberState } from "../actions/event/event";
 
 const url: string = "http://localhost:3000/event";
-export const fetchEventApi = async (uid: string) => {
+export const fetchEventApi = async (eid: number) => {
+  try {
+    const apiresult = await axios.get(`${url}/id`, {
+      params: {
+        Eid: eid,
+      },
+      headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+    });
+    return { isSuccess: true, response: apiresult, error: null };
+  } catch (error) {
+    return { isSuccess: false, data: null, error: error.response };
+  }
+};
+export const fetchEventListApi = async (uid: string) => {
   try {
     const apiresult = await axios.get(url, {
       params: {

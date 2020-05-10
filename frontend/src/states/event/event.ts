@@ -1,5 +1,8 @@
 import { eventActions } from "../../actions/event/event";
-import { reducerWithInitialState } from "typescript-fsa-reducers";
+import {
+  reducerWithInitialState,
+  reducerWithoutInitialState,
+} from "typescript-fsa-reducers";
 import moment from "moment";
 
 export interface EventState {
@@ -11,9 +14,24 @@ export interface EventState {
   OwnerId: string;
 }
 const initialState: EventState[] = [];
-export const eventReducer = reducerWithInitialState(initialState).case(
+export const eventsReducer = reducerWithInitialState(initialState).case(
   eventActions.setEvents,
   (state, event) => {
+    return event;
+  }
+);
+export const eventInitial: EventState = {
+  Id: NaN,
+  StartDate: moment(),
+  EndDate: moment(),
+  Name: "",
+  Description: "",
+  OwnerId: "",
+};
+
+export const eventReducer = reducerWithInitialState(eventInitial).case(
+  eventActions.setEvent,
+  (state, event: EventState) => {
     return event;
   }
 );
